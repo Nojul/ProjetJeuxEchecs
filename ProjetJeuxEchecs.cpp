@@ -6,9 +6,6 @@ ProjetJeuxEchecs::ProjetJeuxEchecs(QWidget* parent)
 {
 	ui->setupUi(this);
 
-
-
-	//...
 }
 
 ProjetJeuxEchecs::~ProjetJeuxEchecs()
