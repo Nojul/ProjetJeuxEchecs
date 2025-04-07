@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
 	bibliotheque_cours::VerifierFuitesAllocations verifierFuitesAllocations;
 	QApplication app(argc, argv);
 	initialiserBibliothequeCours(argc, argv);
-	ProjetJeuxEchecs w;
+	interfaceGraphique::ProjetJeuxEchecs w;
 	w.show();
 	return app.exec();
 }

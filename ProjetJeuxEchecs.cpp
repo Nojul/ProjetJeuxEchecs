@@ -3,7 +3,7 @@
 #include <qpushbutton.h>
 #include <QVBoxLayout> 
 
-ProjetJeuxEchecs::ProjetJeuxEchecs(QWidget* parent)
+interfaceGraphique::ProjetJeuxEchecs::ProjetJeuxEchecs(QWidget* parent)
 	: QMainWindow(parent)
 	, ui(new Ui::ProjetJeuxEchecsClass())
 {
@@ -35,7 +35,7 @@ ProjetJeuxEchecs::ProjetJeuxEchecs(QWidget* parent)
 	}
 }
 
-ProjetJeuxEchecs::~ProjetJeuxEchecs()
+interfaceGraphique::ProjetJeuxEchecs::~ProjetJeuxEchecs()
 {
 	delete ui;
 }
