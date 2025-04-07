@@ -23,6 +23,12 @@ interfaceGraphique::ProjetJeuxEchecs::ProjetJeuxEchecs(QWidget* parent)
 			buttons[i][j] = button;
 			buttons[i][j]->setFixedSize(70, 70);
 
+			//code pour afficher du texte sur des bouttons
+			/*buttons[i][j]->setText("R");
+			QFont font = buttons[i][j]->font();
+			font.setPointSize(20);
+			buttons[i][j]->setFont(font);*/
+
 			if ((i + j) % 2 == 0) {
 				buttons[i][j]->setStyleSheet("background-color: #eeeed2;");
 			}

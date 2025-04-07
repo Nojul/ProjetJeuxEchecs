@@ -6,8 +6,6 @@
 int ModelePieces::Roi::compteurRoi_ = 0;
 
 ModelePieces::Roi::Roi(int posXDebut, int posYDebut) : posX(posXDebut), posY(posYDebut) {
-	//	compteurRoi_++;
-
 	if (compteurRoi_ < 2) {
 		compteurRoi_++;
 	}
