@@ -3,9 +3,9 @@
 
 
 //Commentaire de noe: il manque de savoir si il y a des pieces sur le chemin du deplacement pour voir si il faut arreter le mouvement de la piece et les namespaces
-int ModelePieces::Roi::compteurRoi_ = 0;
+int ModeleJeu::Roi::compteurRoi_ = 0;
 
-ModelePieces::Roi::Roi(int posXDebut, int posYDebut) : posX(posXDebut), posY(posYDebut) {
+ModeleJeu::Roi::Roi(int posXDebut, int posYDebut) : posX(posXDebut), posY(posYDebut) {
 	if (compteurRoi_ < 2) {
 		compteurRoi_++;
 	}
@@ -14,45 +14,45 @@ ModelePieces::Roi::Roi(int posXDebut, int posYDebut) : posX(posXDebut), posY(pos
 	}
 }
 
-ModelePieces::Roi::~Roi() {
+ModeleJeu::Roi::~Roi() {
 	compteurRoi_--;
 }
 
-void  ModelePieces::Roi::deplacer(int x, int y) {
+void  ModeleJeu::Roi::deplacer(int x, int y) {
 	if (verifierDeplacment(x, y)) {
 		posX = x;
 		posY = y;
 	}
 }
 
-bool ModelePieces::Roi::verifierDeplacment(int x, int y) {
+bool ModeleJeu::Roi::verifierDeplacment(int x, int y) {
 	return (abs(posX - x) <= 1 && abs(posY - y) <= 1);
 }
 
-int ModelePieces::Roi::getCompteurRoi() {
+int ModeleJeu::Roi::getCompteurRoi() {
 	return compteurRoi_;
 }
 
 
-bool  ModelePieces::Tour::verifierDeplacment(int x, int y) {
+bool  ModeleJeu::Tour::verifierDeplacment(int x, int y) {
 	return (posX == x || posY == y);
 
 }
 
-bool  ModelePieces::Cavalier::verifierDeplacment(int x, int y) {
+bool  ModeleJeu::Cavalier::verifierDeplacment(int x, int y) {
 	int dx = abs(posX - x);
 	int dy = abs(posY - y);
 	return (dx == 2 && dy == 1) || (dx == 1 && dy == 2);
 }
 
-void  ModelePieces::Tour::deplacer(int x, int y) {
+void  ModeleJeu::Tour::deplacer(int x, int y) {
 	if (verifierDeplacment(x, y)) {
 		posX = x;
 		posY = y;
 	}
 }
 
-void  ModelePieces::Cavalier::deplacer(int x, int y) {
+void  ModeleJeu::Cavalier::deplacer(int x, int y) {
 	if (verifierDeplacment(x, y)) {
 		posX = x;
 		posY = y;

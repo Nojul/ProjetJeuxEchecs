@@ -1,9 +1,7 @@
 ﻿#pragma once
-
 #include "ui_ProjetJeuxEchecs.h"
 #include <iostream>
 #include <QtWidgets/QMainWindow>
-
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class ProjetJeuxEchecsClass; };
@@ -23,7 +21,7 @@ namespace interfaceGraphique {
 	};
 }
 
-namespace ModelePieces {
+namespace ModeleJeu {
 
 	class Piece {
 	public:
@@ -34,6 +32,7 @@ namespace ModelePieces {
 
 	class Roi : public Piece {
 	public:
+		Roi() = default;
 		Roi(int posXDebut, int posYDebut);
 		~Roi();
 
@@ -52,12 +51,11 @@ namespace ModelePieces {
 		using logic_error::logic_error;
 	};
 
-
-
 	class Tour : public Piece {
 	public:
+		Tour() = default;
 		Tour(int posXDebut, int posYDebut) : posX(posXDebut), posY(posYDebut) {}
-		~Tour();
+		//~Tour();
 
 		void deplacer(int x, int y) override;
 		bool verifierDeplacment(int x, int y) override;
@@ -69,8 +67,9 @@ namespace ModelePieces {
 
 	class Cavalier : public Piece {
 	public:
+		Cavalier() = default;
 		Cavalier(int posXDebut, int posYDebut) : posX(posXDebut), posY(posYDebut) {}
-		~Cavalier();
+		//~Cavalier();
 
 		void deplacer(int x, int y) override;
 		bool verifierDeplacment(int x, int y) override;
@@ -79,6 +78,18 @@ namespace ModelePieces {
 		int posX;
 		int posY;
 	};
+
+	class ApplicationPrincipale {
+	public:
+		ApplicationPrincipale() = default;
+		ApplicationPrincipale(std::string placement);
+
+		void changerPlacement(std::string placement);
+
+	private:
+		Piece* echiquier[8][8] = {};
+	};
+
 }
 
 
