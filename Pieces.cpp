@@ -1,9 +1,21 @@
 #include "ProjetJeuxEchecs.h"
 #include <cmath>
-
+#include <iostream>
 
 //Commentaire de noe: il manque de savoir si il y a des pieces sur le chemin du deplacement pour voir si il faut arreter le mouvement de la piece et les namespaces
-int ModeleJeu::Roi::compteurRoi_ = 0;
+
+std::string ModeleJeu::Piece::getCouleur()
+{
+	return couleur_;
+}
+
+void ModeleJeu::Piece::deplacer(int x, int y) {
+	posX = x;
+	posY = y;
+}
+ModeleJeu::Roi::~Roi() {
+	compteurRoi_--;
+}
 
 ModeleJeu::Roi::Roi(int posXDebut, int posYDebut, std::string couleur) :Piece(posXDebut, posYDebut, couleur) {
 	if (compteurRoi_ < 2) {
@@ -14,50 +26,82 @@ ModeleJeu::Roi::Roi(int posXDebut, int posYDebut, std::string couleur) :Piece(po
 	}
 }
 
-ModeleJeu::Roi::~Roi() {
-	compteurRoi_--;
-}
-
-void  ModeleJeu::Roi::deplacer(int x, int y) {
-	if (verifierDeplacment(x, y)) {
-		posX = x;
-		posY = y;
-	}
-}
-
-bool ModeleJeu::Roi::verifierDeplacment(int x, int y) {
-	return (abs(posX - x) <= 1 && abs(posY - y) <= 1);
-}
-
+int ModeleJeu::Roi::compteurRoi_ = 0;
 int ModeleJeu::Roi::getCompteurRoi() {
 	return compteurRoi_;
 }
 
-
-bool  ModeleJeu::Tour::verifierDeplacment(int x, int y) {
-	return (posX == x || posY == y);
-
+bool ModeleJeu::Roi::verifierDeplacement(int x, int y, std::unique_ptr<Piece> echiquier[8][8]) {
+	if (abs(posX - x) <= 1 && abs(posY - y) <= 1) {
+		if (echiquier[x][y] != nullptr && echiquier[x][y]->getCouleur() == couleur_) {
+			return false;
+		}
+		return true;
+	}
+	return false;
 }
 
-bool  ModeleJeu::Cavalier::verifierDeplacment(int x, int y) {
+bool ModeleJeu::Tour::verifierDeplacement(int x, int y, std::unique_ptr<Piece> echiquier[8][8]) {
+	if (posX == x) {
+		int minY = std::min(posY, y);
+		int maxY = std::max(posY, y);
+		for (int i = minY + 1; i < maxY; ++i) {
+			if (echiquier[posX][i] != nullptr) {
+				return false;
+			}
+		}
+	}
+	else if (posY == y) {
+		int minX = std::min(posX, x);
+		int maxX = std::max(posX, x);
+		for (int i = minX + 1; i < maxX; ++i) {
+			if (echiquier[i][posY] != nullptr) {
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
+bool ModeleJeu::Cavalier::verifierDeplacement(int x, int y, std::unique_ptr<Piece> echiquier[8][8]) {
 	int dx = abs(posX - x);
 	int dy = abs(posY - y);
-	return (dx == 2 && dy == 1) || (dx == 1 && dy == 2);
+	if ((dx == 2 && dy == 1) || (dx == 1 && dy == 2)) {
+		if (echiquier[x][y] != nullptr && echiquier[x][y]->getCouleur() == couleur_) {
+			return false;
+		}
+		return true;
+	}
+	return false;
 }
 
-void  ModeleJeu::Tour::deplacer(int x, int y) {
-	if (verifierDeplacment(x, y)) {
-		posX = x;
-		posY = y;
+void ModeleJeu::JeuPrincipal::deplacerPiece(int posX, int posY, std::string couleurJoueur, int nouvPosX, int nouvPosY) {
+	if (echiquier[posX][posY] != nullptr && echiquier[posX][posY]->getCouleur() == couleurJoueur) {
+		try {
+			if (echiquier[posX][posY].get()->verifierDeplacement(nouvPosX, nouvPosY, echiquier)) {
+
+				if (echiquier[nouvPosX][nouvPosY] != nullptr) {
+					echiquier[nouvPosX][nouvPosY] = nullptr;
+				}
+
+				echiquier[posX][posY]->deplacer(nouvPosX, nouvPosY);
+				echiquier[nouvPosX][nouvPosY] = std::move(echiquier[posX][posY]);
+				echiquier[posX][posY] = nullptr;
+				std::cout << "Deplacement effectue de (" << posX << "," << posY << ") a (" << nouvPosX << "," << nouvPosY << ")" << std::endl;
+			}
+			else {
+				std::cerr << "Deplacement invalide pour cette piece" << std::endl;
+			}
+		}
+		catch (const std::exception& e) {
+			std::cerr << "Erreur lors du deplacement : " << e.what() << std::endl;
+		}
+	}
+	else {
+		std::cout << "Erreur : aucune piece a cette position ou mauvaise couleur." << std::endl;
 	}
 }
 
-void  ModeleJeu::Cavalier::deplacer(int x, int y) {
-	if (verifierDeplacment(x, y)) {
-		posX = x;
-		posY = y;
-	}
-}
 
 ModeleJeu::JeuPrincipal::JeuPrincipal(int placement) {
 	for (int i = 0; i < 8; ++i) {
@@ -65,7 +109,7 @@ ModeleJeu::JeuPrincipal::JeuPrincipal(int placement) {
 			echiquier[i][j] = nullptr;
 		}
 	}
-	//QtWidgets.QComboBox.currentIndex()¶
+	//QtWidgets.QComboBox.currentIndex()
 	//Return type :
 	//int
 	//un combobox au debut pour choisir quel position faire, le combobox donne un int dependant du choix
@@ -84,7 +128,6 @@ ModeleJeu::JeuPrincipal::JeuPrincipal(int placement) {
 	switch (placement) {
 
 	case 0: //La Bourdonnais vs. McDonnell, 1834
-
 		echiquier[0][1] = std::make_unique<Tour>(0, 1, "Blanc");
 		echiquier[1][0] = std::make_unique<Cavalier>(1, 0, "Noir");
 		echiquier[3][0] = std::make_unique<Roi>(3, 0, "Noir");
@@ -104,5 +147,6 @@ ModeleJeu::JeuPrincipal::JeuPrincipal(int placement) {
 		break;
 
 	}
-
 }
+
+
