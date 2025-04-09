@@ -1,11 +1,10 @@
-// Fichier de test pour le projet Jeux d'échecs
-// Ce fichier contient les tests unitaires pour le projet Jeux d'échecs.
+// Fichier de test pour le projet Jeux d'echecs
+// Ce fichier contient les tests unitaires pour le projet Jeux d'echecs.
 // Pour le moment, il y a seulement des tests d'exemple.
-// Vous devez ajouter vos propres tests pour vérifier le bon fonctionnement de votre code.
-// 
-// 
+// Vous devez ajouter vos propres tests pour verifier le bon fonctionnement de votre code.
 //
-// Include ici les headers de votre partie de code à tester
+// Include ici les headers de votre partie de code a tester
+#include "ProjetJeuxEchecs.h"
 
 #if __has_include("gtest/gtest.h")
 #include "gtest/gtest.h"
@@ -14,6 +13,8 @@
 
 TEST(Test, exempleDeTest)
 {
+	ModeleJeu::JeuPrincipal jeu(0);
+
 	EXPECT_EQ(1, 1);
 }
 

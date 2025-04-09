@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "ui_ProjetJeuxEchecs.h"
-#include <iostream>
+#include <memory> 
 #include <QtWidgets/QMainWindow>
 
 QT_BEGIN_NAMESPACE
@@ -24,7 +24,13 @@ namespace interfaceGraphique {
 namespace ModeleJeu {
 
 	class Piece {
+	protected:
+		int posX;
+		int posY;
+		std::string couleur_;
+
 	public:
+		Piece(int x, int y, std::string couleur) : posX(x), posY(y), couleur_(couleur) {}
 		virtual ~Piece() = default;
 		virtual bool verifierDeplacment(int x, int y) = 0;
 		virtual void deplacer(int x, int y) = 0;
@@ -32,8 +38,7 @@ namespace ModeleJeu {
 
 	class Roi : public Piece {
 	public:
-		Roi() = default;
-		Roi(int posXDebut, int posYDebut);
+		Roi(int posXDebut, int posYDebut, std::string couleur);
 		~Roi();
 
 		void deplacer(int x, int y) override;
@@ -42,8 +47,6 @@ namespace ModeleJeu {
 
 	private:
 		static int compteurRoi_;
-		int posX;
-		int posY;
 	};
 
 	class CompteurRoisException : public std::logic_error {
@@ -53,41 +56,29 @@ namespace ModeleJeu {
 
 	class Tour : public Piece {
 	public:
-		Tour() = default;
-		Tour(int posXDebut, int posYDebut) : posX(posXDebut), posY(posYDebut) {}
+		Tour(int posXDebut, int posYDebut, std::string couleur) : Piece(posXDebut, posYDebut, couleur) {}
 		//~Tour();
 
 		void deplacer(int x, int y) override;
 		bool verifierDeplacment(int x, int y) override;
-
-	private:
-		int posX;
-		int posY;
 	};
 
 	class Cavalier : public Piece {
 	public:
-		Cavalier() = default;
-		Cavalier(int posXDebut, int posYDebut) : posX(posXDebut), posY(posYDebut) {}
+		Cavalier(int posXDebut, int posYDebut, std::string couleur) : Piece(posXDebut, posYDebut, couleur) {}
 		//~Cavalier();
 
 		void deplacer(int x, int y) override;
 		bool verifierDeplacment(int x, int y) override;
-
-	private:
-		int posX;
-		int posY;
 	};
 
-	class ApplicationPrincipale {
+	class JeuPrincipal {
 	public:
-		ApplicationPrincipale() = default;
-		ApplicationPrincipale(std::string placement);
-
-		void changerPlacement(std::string placement);
+		JeuPrincipal(int placement);
+		~JeuPrincipal();
 
 	private:
-		Piece* echiquier[8][8] = {};
+		std::unique_ptr<Piece> echiquier[8][8];
 	};
 
 }
