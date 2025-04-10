@@ -14,7 +14,9 @@
 TEST(Test, exempleDeTest)
 {
 	ModeleJeu::JeuPrincipal jeu(0);
-	jeu.deplacerPiece(0, 1, "Blanc", 0, 2);
+	jeu.deplacerPiece(0, 1, "Blanc", 3, 1);
+
+
 
 	EXPECT_EQ(1, 1);
 }

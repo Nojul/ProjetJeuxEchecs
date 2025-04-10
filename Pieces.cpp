@@ -42,26 +42,35 @@ bool ModeleJeu::Roi::verifierDeplacement(int x, int y, std::unique_ptr<Piece> ec
 }
 
 bool ModeleJeu::Tour::verifierDeplacement(int x, int y, std::unique_ptr<Piece> echiquier[8][8]) {
-	if (posX == x) {
-		int minY = std::min(posY, y);
-		int maxY = std::max(posY, y);
-		for (int i = minY + 1; i < maxY; ++i) {
-			if (echiquier[posX][i] != nullptr) {
-				return false;
+	if (posX == x || posY == y) {
+		int startX = std::min(posX, x);
+		int endX = std::max(posX, x);
+		int startY = std::min(posY, y);
+		int endY = std::max(posY, y);
+
+		if (posX == x) {
+			for (int i = startY + 1; i < endY; ++i) {
+				if (echiquier[posX][i] != nullptr) {
+					return false;
+				}
 			}
 		}
-	}
-	else if (posY == y) {
-		int minX = std::min(posX, x);
-		int maxX = std::max(posX, x);
-		for (int i = minX + 1; i < maxX; ++i) {
-			if (echiquier[i][posY] != nullptr) {
-				return false;
+		else if (posY == y) {
+			for (int i = startX + 1; i < endX; ++i) {
+				if (echiquier[i][posY] != nullptr) {
+					return false;
+				}
 			}
 		}
+		if (echiquier[x][y] != nullptr && echiquier[x][y]->getCouleur() == couleur_) {
+			return false;
+		}
+		return true;
 	}
-	return true;
+	return false;
 }
+
+
 
 bool ModeleJeu::Cavalier::verifierDeplacement(int x, int y, std::unique_ptr<Piece> echiquier[8][8]) {
 	int dx = abs(posX - x);
@@ -81,6 +90,7 @@ void ModeleJeu::JeuPrincipal::deplacerPiece(int posX, int posY, std::string coul
 			if (echiquier[posX][posY].get()->verifierDeplacement(nouvPosX, nouvPosY, echiquier)) {
 
 				if (echiquier[nouvPosX][nouvPosY] != nullptr) {
+					std::cout << "Piece eliminee a la position (" << nouvPosX << "," << nouvPosY << ")" << std::endl;
 					echiquier[nouvPosX][nouvPosY] = nullptr;
 				}
 
@@ -101,7 +111,6 @@ void ModeleJeu::JeuPrincipal::deplacerPiece(int posX, int posY, std::string coul
 		std::cout << "Erreur : aucune piece a cette position ou mauvaise couleur." << std::endl;
 	}
 }
-
 
 ModeleJeu::JeuPrincipal::JeuPrincipal(int placement) {
 	for (int i = 0; i < 8; ++i) {
@@ -130,7 +139,7 @@ ModeleJeu::JeuPrincipal::JeuPrincipal(int placement) {
 	case 0: //La Bourdonnais vs. McDonnell, 1834
 		echiquier[0][1] = std::make_unique<Tour>(0, 1, "Blanc");
 		echiquier[1][0] = std::make_unique<Cavalier>(1, 0, "Noir");
-		echiquier[3][0] = std::make_unique<Roi>(3, 0, "Noir");
+		echiquier[3][1] = std::make_unique<Roi>(3, 1, "Noir");
 		echiquier[3][2] = std::make_unique<Roi>(3, 2, "Blanc");
 		break;
 
