@@ -59,6 +59,7 @@ namespace ModeleJeu {
 	public:
 		JeuPrincipal(int placement);
 
+		void ajouterPiece(int posX, int posY, std::string couleurDonne, std::string typePiece);
 		void deplacerPiece(int posX, int posY, std::string couleurJoueur, int nouvPosX, int nouvPosY);
 
 	private:

@@ -3,8 +3,6 @@
 #include <cmath>
 #include <iostream>
 
-//Commentaire de noe: il manque de savoir si il y a des pieces sur le chemin du deplacement pour voir si il faut arreter le mouvement de la piece et les namespaces
-
 std::string ModeleJeu::Piece::getCouleur()
 {
 	return couleur_;
@@ -71,8 +69,6 @@ bool ModeleJeu::Tour::verifierDeplacement(int x, int y, std::unique_ptr<Piece> e
 	return false;
 }
 
-
-
 bool ModeleJeu::Cavalier::verifierDeplacement(int x, int y, std::unique_ptr<Piece> echiquier[8][8]) {
 	int dx = abs(posX - x);
 	int dy = abs(posY - y);
@@ -83,6 +79,26 @@ bool ModeleJeu::Cavalier::verifierDeplacement(int x, int y, std::unique_ptr<Piec
 		return true;
 	}
 	return false;
+}
+
+void ModeleJeu::JeuPrincipal::ajouterPiece(int posX, int posY, std::string couleurDonne, std::string typePiece) {
+	if (posX < 0 || posX >= 8 || posY < 0 || posY >= 8) {
+		std::cerr << "Position (" << posX << ", " << posY << ") est hors des limites du plateau." << std::endl;
+		return;
+	}
+	if (typePiece == "Roi")
+		try {
+		echiquier[posX][posY] = std::make_unique<Roi>(posX, posY, couleurDonne);
+	}
+	catch (CompteurRoisException e) {
+		std::cerr << "Erreur lors de l'ajout : " << e.what() << std::endl;
+		return;
+	}
+	else if (typePiece == "Tour")
+		echiquier[posX][posY] = std::make_unique<Tour>(posX, posY, couleurDonne);
+	else if (typePiece == "Cavalier")
+		echiquier[posX][posY] = std::make_unique<Cavalier>(posX, posY, couleurDonne);
+	std::cout << "Ajout de " << typePiece << " " << couleurDonne << " sur (" << posX << ", " << posY << ")" << std::endl;
 }
 
 void ModeleJeu::JeuPrincipal::deplacerPiece(int posX, int posY, std::string couleurJoueur, int nouvPosX, int nouvPosY) {
@@ -107,9 +123,6 @@ void ModeleJeu::JeuPrincipal::deplacerPiece(int posX, int posY, std::string coul
 		catch (const std::exception& e) {
 			std::cerr << "Erreur lors du deplacement : " << e.what() << std::endl;
 		}
-	}
-	else {
-		std::cout << "Erreur : aucune piece a cette position ou mauvaise couleur." << std::endl;
 	}
 }
 
@@ -136,27 +149,39 @@ ModeleJeu::JeuPrincipal::JeuPrincipal(int placement) {
 		  0 1 2 3 4 5 6 7*/
 
 	switch (placement) {
-
-	case 0: //La Bourdonnais vs. McDonnell, 1834
-		echiquier[0][1] = std::make_unique<Tour>(0, 1, "Blanc");
-		echiquier[1][0] = std::make_unique<Cavalier>(1, 0, "Noir");
-		echiquier[3][1] = std::make_unique<Roi>(3, 1, "Noir");
-		echiquier[3][2] = std::make_unique<Roi>(3, 2, "Blanc");
+	case 0: // La Bourdonnais vs. McDonnell, 1834
+		std::cout << "Debut de la partie : La Bourdonnais vs. McDonnell, 1834" << std::endl;
+		ajouterPiece(0, 1, "Blanc", "Tour");
+		ajouterPiece(1, 0, "Noir", "Cavalier");
+		ajouterPiece(3, 1, "Noir", "Roi");
+		ajouterPiece(3, 2, "Blanc", "Roi");
 		break;
 
-	case 1: //Karpov vs. Ftacnik, 1988
-
+	case 1: // Karpov vs. Ftacnik, 1988
+		std::cout << "Debut de la partie : Karpov vs. Ftacnik, 1988" << std::endl;
+		ajouterPiece(1, 5, "Blanc", "Tour");
+		ajouterPiece(2, 1, "Noir", "Cavalier");
+		ajouterPiece(5, 7, "Noir", "Roi");
+		ajouterPiece(2, 4, "Blanc", "Roi");
 		break;
 
-	case 2: //J. Polgar vs. Kasparov, 1996[40]
-
+	case 2: // J. Polgar vs. Kasparov, 1996
+		std::cout << "Debut de la partie : J. Polgar vs. Kasparov, 1996" << std::endl;
+		ajouterPiece(0, 4, "Blanc", "Tour");
+		ajouterPiece(7, 6, "Noir", "Tour");
+		ajouterPiece(6, 4, "Noir", "Cavalier");
+		ajouterPiece(5, 5, "Noir", "Roi");
+		ajouterPiece(4, 7, "Blanc", "Roi");
 		break;
 
-	case 3: //Alekhine vs. Capablanca, 1927[41]
-
+	case 3: // Alekhine vs. Capablanca, 1927
+		std::cout << "Debut de la partie : Alekhine vs. Capablanca, 1927" << std::endl;
+		ajouterPiece(6, 1, "Blanc", "Tour");
+		ajouterPiece(1, 0, "Noir", "Tour");
+		ajouterPiece(1, 3, "Noir", "Cavalier");
+		ajouterPiece(2, 3, "Noir", "Roi");
+		ajouterPiece(4, 3, "Blanc", "Roi");
 		break;
-
 	}
 }
-
 

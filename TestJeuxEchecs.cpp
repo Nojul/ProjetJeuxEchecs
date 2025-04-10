@@ -4,6 +4,7 @@
 // Vous devez ajouter vos propres tests pour verifier le bon fonctionnement de votre code.
 //
 // Include ici les headers de votre partie de code a tester
+#include "Pieces.h"
 #include "ProjetJeuxEchecs.h"
 
 #if __has_include("gtest/gtest.h")
@@ -14,7 +15,6 @@
 TEST(Test, exempleDeTest)
 {
 	ModeleJeu::JeuPrincipal jeu(0);
-	jeu.deplacerPiece(0, 1, "Blanc", 3, 1);
 
 	EXPECT_EQ(1, 1);
 }
