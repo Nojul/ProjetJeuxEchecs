@@ -1,3 +1,4 @@
+#include "Pieces.h"
 #include "ProjetJeuxEchecs.h"
 #include <cmath>
 #include <iostream>
