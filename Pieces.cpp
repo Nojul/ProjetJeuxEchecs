@@ -185,3 +185,18 @@ ModeleJeu::JeuPrincipal::JeuPrincipal(int placement) {
 	}
 }
 
+ModeleJeu::Temporaire::Temporaire(int positionX, int positionY, int nouvPositionX, int nouvPositionY, std::unique_ptr<Piece>(&echiquier)[8][8])
+	: positionX_(positionX), positionY_(positionY), nouvPositionX_(nouvPositionX), nouvPositionY_(nouvPositionY), echiquier_(echiquier)
+{
+	std::unique_ptr<Piece> piece_ = move(echiquier_[positionX_][positionY_]);
+	std::unique_ptr<Piece> pieceCapturee_ = move(echiquier_[nouvPositionX_][nouvPositionY_]);
+	echiquier_[nouvPositionX_][nouvPositionY_] = move(piece_);
+}
+
+ModeleJeu::Temporaire::~Temporaire()
+{
+	std::unique_ptr<Piece> piece_ = move(echiquier_[nouvPositionX_][nouvPositionY_]);
+	echiquier_[nouvPositionX_][nouvPositionY_] = move(pieceCapturee_);
+	echiquier_[positionX_][positionY_] = move(piece_);
+}
+

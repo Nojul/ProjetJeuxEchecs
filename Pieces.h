@@ -65,4 +65,21 @@ namespace ModeleJeu {
 	private:
 		std::unique_ptr<Piece> echiquier[8][8];
 	};
+
+	//Classe RAII permettant de bouger une piece temporairement
+	class Temporaire {
+	public:
+		Temporaire(int positionX, int positionY, int nouvPositionX, int nouvPositionY, std::unique_ptr<Piece>(&echiquier)[8][8]);
+
+		~Temporaire();
+
+	private:
+		int positionX_;
+		int positionY_;
+		int nouvPositionX_;
+		int nouvPositionY_;
+		std::unique_ptr<Piece> (&echiquier_)[8][8];
+		std::unique_ptr<Piece> piece_;
+		std::unique_ptr<Piece> pieceCapturee_;
+	};
 }
