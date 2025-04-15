@@ -185,6 +185,11 @@ ModeleJeu::JeuPrincipal::JeuPrincipal(int placement) {
 	}
 }
 
+ModeleJeu::Piece* ModeleJeu::JeuPrincipal::getPiece(int x, int y)
+{
+	return echiquier[x][y].get();
+}
+
 ModeleJeu::Temporaire::Temporaire(int positionX, int positionY, int nouvPositionX, int nouvPositionY, std::unique_ptr<Piece>(&echiquier)[8][8])
 	: positionX_(positionX), positionY_(positionY), nouvPositionX_(nouvPositionX), nouvPositionY_(nouvPositionY), echiquier_(echiquier)
 {

@@ -61,6 +61,7 @@ namespace ModeleJeu {
 
 		void ajouterPiece(int posX, int posY, std::string couleurDonne, std::string typePiece);
 		void deplacerPiece(int posX, int posY, std::string couleurJoueur, int nouvPosX, int nouvPosY);
+		Piece* getPiece(int x, int y);
 
 	private:
 		std::unique_ptr<Piece> echiquier[8][8];
