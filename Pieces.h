@@ -20,7 +20,6 @@ namespace ModeleJeu {
 		virtual bool verifierDeplacement(int x, int y, std::unique_ptr<Piece> echiquier[8][8]) = 0;
 		virtual std::string getCouleur();
 		void deplacer(int x, int y);
-
 	};
 
 	class Roi : public Piece {
@@ -45,7 +44,6 @@ namespace ModeleJeu {
 		Tour(int posXDebut, int posYDebut, std::string couleur) : Piece(posXDebut, posYDebut, couleur) {}
 
 		bool verifierDeplacement(int x, int y, std::unique_ptr<Piece> echiquier[8][8]) override;
-
 	};
 
 	class Cavalier : public Piece {
