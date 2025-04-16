@@ -65,7 +65,7 @@ int xSelectionne = -1;
 int ySelectionne = -1;
 void interfaceGraphique::ProjetJeuxEchecs::clic(int x, int y) 
 {
-	if (xSelectionne == -1) 
+	if (xSelectionne == -1)
 	{
 		xSelectionne = x;
 		ySelectionne = y;
@@ -73,17 +73,19 @@ void interfaceGraphique::ProjetJeuxEchecs::clic(int x, int y)
 	}
 	else
 	{
-		jeu -> deplacerPiece(xSelectionne, ySelectionne, joueur, x, y);
-		qDebug() << "Deplacement";
+		bool deplacement = jeu -> deplacerPiece(xSelectionne, ySelectionne, joueur, x, y);
+		qDebug() << "deuxieme clic";
 		miseAJour(); 
-		//Sauf si deplacement invalide... Verifier
-		if (joueur == "Blanc") 
+		if (deplacement) 
 		{
-			joueur = "Noir";
-		}
-		else 
-		{
-			joueur = "Blanc";
+			if (joueur == "Blanc")
+			{
+				joueur = "Noir";
+			}
+			else
+			{
+				joueur = "Blanc";
+			}
 		}
 		xSelectionne = -1;
 		ySelectionne = -1;

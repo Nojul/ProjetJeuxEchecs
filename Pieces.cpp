@@ -101,7 +101,7 @@ void ModeleJeu::JeuPrincipal::ajouterPiece(int posX, int posY, std::string coule
 	std::cout << "Ajout de " << typePiece << " " << couleurDonne << " sur (" << posX << ", " << posY << ")" << std::endl;
 }
 
-void ModeleJeu::JeuPrincipal::deplacerPiece(int posX, int posY, std::string couleurJoueur, int nouvPosX, int nouvPosY) {
+bool ModeleJeu::JeuPrincipal::deplacerPiece(int posX, int posY, std::string couleurJoueur, int nouvPosX, int nouvPosY) {
 	if (echiquier[posX][posY] != nullptr && echiquier[posX][posY]->getCouleur() == couleurJoueur) {
 		try {
 			if (echiquier[posX][posY].get()->verifierDeplacement(nouvPosX, nouvPosY, echiquier)) {
@@ -115,14 +115,22 @@ void ModeleJeu::JeuPrincipal::deplacerPiece(int posX, int posY, std::string coul
 				echiquier[nouvPosX][nouvPosY] = std::move(echiquier[posX][posY]);
 				echiquier[posX][posY] = nullptr;
 				std::cout << "Deplacement effectue de (" << posX << "," << posY << ") a (" << nouvPosX << "," << nouvPosY << ")" << std::endl;
+				return(true);
 			}
 			else {
 				std::cerr << "Deplacement invalide pour cette piece" << std::endl;
+				return(false);
 			}
 		}
 		catch (const std::exception& e) {
 			std::cerr << "Erreur lors du deplacement : " << e.what() << std::endl;
+			return(false);
 		}
+	}
+	else if (echiquier[posX][posY]->getCouleur() != couleurJoueur) 
+	{
+		std::cout << "La piece a deplacer ne correspond pas avec la couleur du joueur." << std::endl;
+		return(false);
 	}
 }
 
