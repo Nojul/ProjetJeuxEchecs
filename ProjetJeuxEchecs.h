@@ -1,5 +1,7 @@
 ﻿#pragma once
 #include "ui_ProjetJeuxEchecs.h"
+#include "Pieces.h"
+#include <qpushbutton.h>
 #include <memory> 
 #include <QtWidgets/QMainWindow>
 
@@ -16,8 +18,14 @@ namespace interfaceGraphique {
 		ProjetJeuxEchecs(QWidget* parent = nullptr);
 		~ProjetJeuxEchecs();
 
+		void clic(int x, int y);
+		void miseAJour();
+
 	private:
 		Ui::ProjetJeuxEchecsClass* ui;
+		QPushButton* buttons[8][8];
+		ModeleJeu::JeuPrincipal* jeu = nullptr;
+		std::string joueur = "Blanc";
 	};
 }
 
