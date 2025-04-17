@@ -102,34 +102,46 @@ void ModeleJeu::JeuPrincipal::ajouterPiece(int posX, int posY, std::string coule
 }
 
 bool ModeleJeu::JeuPrincipal::deplacerPiece(int posX, int posY, std::string couleurJoueur, int nouvPosX, int nouvPosY) {
-	if (echiquier[posX][posY] != nullptr && echiquier[posX][posY]->getCouleur() == couleurJoueur) {
-		try {
-			if (echiquier[posX][posY].get()->verifierDeplacement(nouvPosX, nouvPosY, echiquier)) {
-
-				if (echiquier[nouvPosX][nouvPosY] != nullptr) {
-					std::cout << "Piece eliminee a la position (" << nouvPosX << "," << nouvPosY << ")" << std::endl;
-					echiquier[nouvPosX][nouvPosY] = nullptr;
+	if (echiquier[posX][posY] == nullptr) 
+	{
+		std::cout << "Aucune piece selectionnee" << std::endl;
+		return(false);
+	}
+	if (echiquier[posX][posY]->getCouleur() != couleurJoueur) 
+	{
+		std::cout << "La piece a deplacer ne correspond pas avec la couleur du joueur." << std::endl;
+		return(false);
+	}
+	try {
+		if (echiquier[posX][posY].get()->verifierDeplacement(nouvPosX, nouvPosY, echiquier))
+		{
+			{
+				Temporaire pieceTemporaire(posX, posY, nouvPosX, nouvPosY, echiquier);
+				if (pieceTemporaire.verifierEchec(couleurJoueur))
+				{
+					std::cout << "Ce deplacement place le joueur " << couleurJoueur << " en echec." << std::endl;
+					return false;
 				}
+			}
+			if (echiquier[nouvPosX][nouvPosY] != nullptr)
+			{
+				std::cout << "Piece eliminee a la position (" << nouvPosX << "," << nouvPosY << ")" << std::endl;
+				echiquier[nouvPosX][nouvPosY] = nullptr;
+			}
 
-				echiquier[posX][posY]->deplacer(nouvPosX, nouvPosY);
-				echiquier[nouvPosX][nouvPosY] = std::move(echiquier[posX][posY]);
-				echiquier[posX][posY] = nullptr;
-				std::cout << "Deplacement effectue de (" << posX << "," << posY << ") a (" << nouvPosX << "," << nouvPosY << ")" << std::endl;
-				return(true);
-			}
-			else {
-				std::cerr << "Deplacement invalide pour cette piece" << std::endl;
-				return(false);
-			}
+			echiquier[posX][posY]->deplacer(nouvPosX, nouvPosY);
+			echiquier[nouvPosX][nouvPosY] = std::move(echiquier[posX][posY]);
+			echiquier[posX][posY] = nullptr;
+			std::cout << "Deplacement effectue de (" << posX << "," << posY << ") a (" << nouvPosX << "," << nouvPosY << ")" << std::endl;
+			return(true);
 		}
-		catch (const std::exception& e) {
-			std::cerr << "Erreur lors du deplacement : " << e.what() << std::endl;
+		else {
+			std::cerr << "Deplacement invalide pour cette piece" << std::endl;
 			return(false);
 		}
 	}
-	else if (echiquier[posX][posY]->getCouleur() != couleurJoueur) 
-	{
-		std::cout << "La piece a deplacer ne correspond pas avec la couleur du joueur." << std::endl;
+	catch (const std::exception& e) {
+		std::cerr << "Erreur lors du deplacement : " << e.what() << std::endl;
 		return(false);
 	}
 }
@@ -212,4 +224,47 @@ ModeleJeu::Temporaire::~Temporaire()
 	echiquier_[nouvPositionX_][nouvPositionY_] = move(pieceCapturee_);
 	echiquier_[positionX_][positionY_] = move(piece_);
 }
+
+ModeleJeu::Piece* ModeleJeu::Temporaire::getTemporaire() 
+{
+	return echiquier_[nouvPositionX_][nouvPositionY_].get();
+}
+
+bool ModeleJeu::Temporaire::verifierEchec(std::string couleurJoueur) 
+{
+	int positionRoiX = -1;
+	int positionRoiY = -1;
+	for (int i=0; i < 8; i++)
+	{
+		for (int j=0; j < 8; j++)
+		{
+			Piece* piece = echiquier_[i][j].get();
+			if (piece and dynamic_cast<ModeleJeu::Roi*>(piece) and piece->getCouleur() == couleurJoueur)
+			{
+				Piece* monRoi = piece;
+				positionRoiX = i;
+				positionRoiY = j;
+			}
+		}
+	}
+	if (positionRoiX == -1 and positionRoiY == -1) 
+	{
+		std::cout << "Le roi n'a pas ete trouve." << std::endl;
+		return false;
+	}
+	for (int i=0; i < 8; i++) 
+	{
+		for (int j=0; j < 8; j++)
+		{
+			Piece* pieceAdverse = echiquier_[i][j].get();
+			if (pieceAdverse and pieceAdverse->verifierDeplacement(positionRoiX, positionRoiY, echiquier_) and pieceAdverse->getCouleur() != couleurJoueur) 
+			{
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+
 

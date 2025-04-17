@@ -4,6 +4,7 @@
 #include <qpushbutton.h>
 #include <QVBoxLayout> 
 
+
 interfaceGraphique::ProjetJeuxEchecs::ProjetJeuxEchecs(QWidget* parent)
 	: QMainWindow(parent)
 	, ui(new Ui::ProjetJeuxEchecsClass())

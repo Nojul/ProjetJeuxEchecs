@@ -71,8 +71,9 @@ namespace ModeleJeu {
 	class Temporaire {
 	public:
 		Temporaire(int positionX, int positionY, int nouvPositionX, int nouvPositionY, std::unique_ptr<Piece>(&echiquier)[8][8]);
-
 		~Temporaire();
+		Piece* getTemporaire();
+		bool verifierEchec(std::string couleurJouer);
 
 	private:
 		int positionX_;
