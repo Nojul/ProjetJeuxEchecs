@@ -4,6 +4,7 @@
 #include <qpushbutton.h>
 #include <memory> 
 #include <QtWidgets/QMainWindow>
+#include <QLabel>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class ProjetJeuxEchecsClass; };
@@ -26,6 +27,7 @@ namespace interfaceGraphique {
 		QPushButton* buttons[8][8];
 		ModeleJeu::JeuPrincipal* jeu = nullptr;
 		std::string joueur = "Blanc";
+		QLabel* messageErreur_ = nullptr;
 	};
 }
 

@@ -3,6 +3,7 @@
 #include <QString>
 #include <qpushbutton.h>
 #include <QVBoxLayout> 
+#include <QTimer>
 
 
 interfaceGraphique::ProjetJeuxEchecs::ProjetJeuxEchecs(QWidget* parent)
@@ -14,16 +15,13 @@ interfaceGraphique::ProjetJeuxEchecs::ProjetJeuxEchecs(QWidget* parent)
 	QGridLayout* gridLayout = new QGridLayout();
 	gridLayout->setSpacing(0);
 	QWidget* centralWidget = new QWidget(this);
-	centralWidget->setLayout(gridLayout);
+	//centralWidget->setLayout(gridLayout);
 	setCentralWidget(centralWidget);
 
 	const int tailleEchiquier = 8;
-	//QPushButton* buttons[tailleEchiquier][tailleEchiquier];
 
 	for (int i = 0; i < tailleEchiquier; ++i) {		//lignes
 		for (int j = 0; j < tailleEchiquier; ++j) {	//colonnes
-			//QPushButton* button = new QPushButton(this);
-			//buttons[i][j] = button;
 			this->buttons[i][j] = new QPushButton(this);
 			this->buttons[i][j]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
@@ -55,6 +53,16 @@ interfaceGraphique::ProjetJeuxEchecs::ProjetJeuxEchecs(QWidget* parent)
 	}
 	jeu = new ModeleJeu::JeuPrincipal(1);
 	miseAJour();
+
+	messageErreur_ = new QLabel(this);
+	//messageErreur_->setStyleSheet("color: red");
+	messageErreur_->setAlignment(Qt::AlignBottom | Qt::AlignRight);
+	messageErreur_->setText("");
+
+	QVBoxLayout* layoutPrincipal = new QVBoxLayout();
+	layoutPrincipal->addLayout(gridLayout);
+	layoutPrincipal->addWidget(messageErreur_, 0, Qt::AlignRight);
+	centralWidget->setLayout(layoutPrincipal);
 }
 
 interfaceGraphique::ProjetJeuxEchecs::~ProjetJeuxEchecs()
@@ -74,10 +82,10 @@ void interfaceGraphique::ProjetJeuxEchecs::clic(int x, int y)
 	}
 	else
 	{
-		bool deplacement = jeu -> deplacerPiece(xSelectionne, ySelectionne, joueur, x, y);
+		std::tuple<bool, std::string> deplacement = jeu -> deplacerPiece(xSelectionne, ySelectionne, joueur, x, y);
 		qDebug() << "deuxieme clic";
 		miseAJour(); 
-		if (deplacement) 
+		if (get<0>(deplacement)) 
 		{
 			if (joueur == "Blanc")
 			{
@@ -87,6 +95,12 @@ void interfaceGraphique::ProjetJeuxEchecs::clic(int x, int y)
 			{
 				joueur = "Blanc";
 			}
+		}
+		else 
+		{
+			messageErreur_->setText(QString::fromStdString(get<1>(deplacement)));
+			messageErreur_->show();
+			QTimer::singleShot(2000, messageErreur_, &QLabel::hide);
 		}
 		xSelectionne = -1;
 		ySelectionne = -1;

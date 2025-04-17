@@ -60,7 +60,7 @@ namespace ModeleJeu {
 		JeuPrincipal(int placement);
 
 		void ajouterPiece(int posX, int posY, std::string couleurDonne, std::string typePiece);
-		bool deplacerPiece(int posX, int posY, std::string couleurJoueur, int nouvPosX, int nouvPosY);
+		std::tuple<bool,std::string> deplacerPiece(int posX, int posY, std::string couleurJoueur, int nouvPosX, int nouvPosY);
 		Piece* getPiece(int x, int y);
 
 	private:

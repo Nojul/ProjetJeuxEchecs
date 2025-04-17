@@ -101,16 +101,16 @@ void ModeleJeu::JeuPrincipal::ajouterPiece(int posX, int posY, std::string coule
 	std::cout << "Ajout de " << typePiece << " " << couleurDonne << " sur (" << posX << ", " << posY << ")" << std::endl;
 }
 
-bool ModeleJeu::JeuPrincipal::deplacerPiece(int posX, int posY, std::string couleurJoueur, int nouvPosX, int nouvPosY) {
+std::tuple<bool,std::string> ModeleJeu::JeuPrincipal::deplacerPiece(int posX, int posY, std::string couleurJoueur, int nouvPosX, int nouvPosY) {
 	if (echiquier[posX][posY] == nullptr) 
 	{
 		std::cout << "Aucune piece selectionnee" << std::endl;
-		return(false);
+		return{ false, "Aucune piece selectionnee" };
 	}
 	if (echiquier[posX][posY]->getCouleur() != couleurJoueur) 
 	{
 		std::cout << "La piece a deplacer ne correspond pas avec la couleur du joueur." << std::endl;
-		return(false);
+		return{false, "La piece a deplacer ne correspond pas avec la couleur du joueur."};
 	}
 	try {
 		if (echiquier[posX][posY].get()->verifierDeplacement(nouvPosX, nouvPosY, echiquier))
@@ -120,7 +120,7 @@ bool ModeleJeu::JeuPrincipal::deplacerPiece(int posX, int posY, std::string coul
 				if (pieceTemporaire.verifierEchec(couleurJoueur))
 				{
 					std::cout << "Ce deplacement place le joueur " << couleurJoueur << " en echec." << std::endl;
-					return false;
+					return {false, "Ce deplacement place le joueur " + couleurJoueur + " en echec." };
 				}
 			}
 			if (echiquier[nouvPosX][nouvPosY] != nullptr)
@@ -133,16 +133,16 @@ bool ModeleJeu::JeuPrincipal::deplacerPiece(int posX, int posY, std::string coul
 			echiquier[nouvPosX][nouvPosY] = std::move(echiquier[posX][posY]);
 			echiquier[posX][posY] = nullptr;
 			std::cout << "Deplacement effectue de (" << posX << "," << posY << ") a (" << nouvPosX << "," << nouvPosY << ")" << std::endl;
-			return(true);
+			return{true,""};
 		}
 		else {
 			std::cerr << "Deplacement invalide pour cette piece" << std::endl;
-			return(false);
+			return{ false , "Deplacement invalide pour cette piece"};
 		}
 	}
 	catch (const std::exception& e) {
 		std::cerr << "Erreur lors du deplacement : " << e.what() << std::endl;
-		return(false);
+		return{ false, "Erreur lors du deplacement." };
 	}
 }
 
