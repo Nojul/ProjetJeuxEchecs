@@ -63,9 +63,9 @@ interfaceGraphique::ProjetJeuxEchecs::~ProjetJeuxEchecs()
 
 int xSelectionne = -1;
 int ySelectionne = -1;
-void interfaceGraphique::ProjetJeuxEchecs::clic(int x, int y) 
+void interfaceGraphique::ProjetJeuxEchecs::clic(int x, int y)
 {
-	if (xSelectionne == -1) 
+	if (xSelectionne == -1)
 	{
 		xSelectionne = x;
 		ySelectionne = y;
@@ -73,15 +73,15 @@ void interfaceGraphique::ProjetJeuxEchecs::clic(int x, int y)
 	}
 	else
 	{
-		jeu -> deplacerPiece(xSelectionne, ySelectionne, joueur, x, y);
+		jeu->deplacerPiece(xSelectionne, ySelectionne, joueur, x, y);
 		qDebug() << "Deplacement";
-		miseAJour(); 
+		miseAJour();
 		//Sauf si deplacement invalide... Verifier
-		if (joueur == "Blanc") 
+		if (joueur == "Blanc")
 		{
 			joueur = "Noir";
 		}
-		else 
+		else
 		{
 			joueur = "Blanc";
 		}
@@ -100,11 +100,11 @@ void interfaceGraphique::ProjetJeuxEchecs::miseAJour()
 				QString imagePiece;
 				if (dynamic_cast<ModeleJeu::Roi*>(piece))
 				{
-					if (piece->getCouleur() == "Blanc") 
+					if (piece->getCouleur() == "Blanc")
 					{
 						imagePiece = "♔";
 					}
-					else 
+					else
 					{
 						imagePiece = "♚";
 					}
@@ -133,7 +133,7 @@ void interfaceGraphique::ProjetJeuxEchecs::miseAJour()
 				}
 				buttons[i][j]->setText(imagePiece);
 			}
-			else 
+			else
 			{
 				buttons[i][j]->setText("");
 			}
