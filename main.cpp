@@ -1,4 +1,11 @@
-﻿// Fichier : main.cpp
+﻿/**
+* Programme principal de l'application de jeux d'echecs
+* \file   main.cpp
+* \author Latendresse et Julien
+* \date   4 mai 2025
+* Cree le 6 avril 2025
+*/
+// Fichier : main.cpp
 // Description :
 // Programme principal de l'application de jeux d'échecs
 //

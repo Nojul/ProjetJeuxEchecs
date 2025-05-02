@@ -1,3 +1,11 @@
+/**
+* Programme permettant de tester le programme avec des test unitaires sans interface graphique
+* \file   TestJeuxEchecs.cpp
+* \author Latendresse et Julien
+* \date   4 mai 2025
+* Cree le 6 avril 2025
+*/
+
 // Fichier de test pour le projet Jeux d'echecs
 // Ce fichier contient les tests unitaires pour le projet Jeux d'echecs.
 // Pour le moment, il y a seulement des tests d'exemple.

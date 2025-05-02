@@ -1,3 +1,10 @@
+/**
+* Definition des composants du jeu dechecs pieces et echiquier
+* \file   Pieces.cpp
+* \author Latendresse et Julien
+* \date   4 mai 2025
+* Cree le 6 avril 2025
+*/
 #include "Pieces.h"
 #include "ProjetJeuxEchecs.h"
 #include <cmath>
@@ -9,14 +16,14 @@ std::string ModeleJeu::Piece::getCouleur()
 }
 
 void ModeleJeu::Piece::deplacer(int x, int y) {
-	posX = x;
-	posY = y;
+	posX_ = x;
+	posY_ = y;
 }
 ModeleJeu::Roi::~Roi() {
 	compteurRoi_--;
 }
 
-ModeleJeu::Roi::Roi(int posXDebut, int posYDebut, std::string couleur) :Piece(posXDebut, posYDebut, couleur) {
+ModeleJeu::Roi::Roi(int posX_Debut, int posY_Debut, std::string couleur) :Piece(posX_Debut, posY_Debut, couleur) {
 	if (compteurRoi_ < 2) {
 		compteurRoi_++;
 	}
@@ -31,7 +38,7 @@ int ModeleJeu::Roi::getCompteurRoi() {
 }
 
 bool ModeleJeu::Roi::verifierDeplacement(int x, int y, std::unique_ptr<Piece> echiquier[8][8]) {
-	if (abs(posX - x) <= 1 && abs(posY - y) <= 1) {
+	if (abs(posX_ - x) <= 1 && abs(posY_ - y) <= 1) {
 		if (echiquier[x][y] != nullptr && echiquier[x][y]->getCouleur() == couleur_) {
 			return false;
 		}
@@ -41,22 +48,22 @@ bool ModeleJeu::Roi::verifierDeplacement(int x, int y, std::unique_ptr<Piece> ec
 }
 
 bool ModeleJeu::Tour::verifierDeplacement(int x, int y, std::unique_ptr<Piece> echiquier[8][8]) {
-	if (posX == x || posY == y) {
-		int startX = std::min(posX, x);
-		int endX = std::max(posX, x);
-		int startY = std::min(posY, y);
-		int endY = std::max(posY, y);
+	if (posX_ == x || posY_ == y) {
+		int startX = std::min(posX_, x);
+		int endX = std::max(posX_, x);
+		int startY = std::min(posY_, y);
+		int endY = std::max(posY_, y);
 
-		if (posX == x) {
+		if (posX_ == x) {
 			for (int i = startY + 1; i < endY; ++i) {
-				if (echiquier[posX][i] != nullptr) {
+				if (echiquier[posX_][i] != nullptr) {
 					return false;
 				}
 			}
 		}
-		else if (posY == y) {
+		else if (posY_ == y) {
 			for (int i = startX + 1; i < endX; ++i) {
-				if (echiquier[i][posY] != nullptr) {
+				if (echiquier[i][posY_] != nullptr) {
 					return false;
 				}
 			}
@@ -70,8 +77,8 @@ bool ModeleJeu::Tour::verifierDeplacement(int x, int y, std::unique_ptr<Piece> e
 }
 
 bool ModeleJeu::Cavalier::verifierDeplacement(int x, int y, std::unique_ptr<Piece> echiquier[8][8]) {
-	int dx = abs(posX - x);
-	int dy = abs(posY - y);
+	int dx = abs(posX_ - x);
+	int dy = abs(posY_ - y);
 	if ((dx == 2 && dy == 1) || (dx == 1 && dy == 2)) {
 		if (echiquier[x][y] != nullptr && echiquier[x][y]->getCouleur() == couleur_) {
 			return false;
@@ -81,66 +88,67 @@ bool ModeleJeu::Cavalier::verifierDeplacement(int x, int y, std::unique_ptr<Piec
 	return false;
 }
 
-void ModeleJeu::JeuPrincipal::ajouterPiece(int posX, int posY, std::string couleurDonne, std::string typePiece) {
-	if (posX < 0 || posX >= 8 || posY < 0 || posY >= 8) {
+void ModeleJeu::JeuPrincipal::ajouterPiece(int posX_, int posY_, std::string couleurDonne, std::string typePiece) {
+	if (posX_ < 0 || posX_ >= 8 || posY_ < 0 || posY_ >= 8) {
 		throw std::out_of_range("Position hors des limites du plateau");
 	}
-	if (echiquier[posX][posY]) {
-		echiquier[posX][posY].reset();
+	if (echiquier[posX_][posY_]) {
+		echiquier[posX_][posY_].reset();
 	}
 
 	if (typePiece == "Roi") {
 		try {
-			auto nouvellePiece = std::make_unique<Roi>(posX, posY, couleurDonne);
-			echiquier[posX][posY] = std::move(nouvellePiece);
+			auto nouvellePiece = std::make_unique<Roi>(posX_, posY_, couleurDonne);
+			echiquier[posX_][posY_] = std::move(nouvellePiece);
 		}
 		catch (const CompteurRoisException& e) {
-			echiquier[posX][posY].reset();
+			std::cerr << "Erreur roi : " << e.what() << std::endl;
+			echiquier[posX_][posY_].reset();
 			throw;
 		}
 	}
 	else if (typePiece == "Tour") {
-		echiquier[posX][posY] = std::make_unique<Tour>(posX, posY, couleurDonne);
+		echiquier[posX_][posY_] = std::make_unique<Tour>(posX_, posY_, couleurDonne);
 	}
 	else if (typePiece == "Cavalier") {
-		echiquier[posX][posY] = std::make_unique<Cavalier>(posX, posY, couleurDonne);
+		echiquier[posX_][posY_] = std::make_unique<Cavalier>(posX_, posY_, couleurDonne);
 	}
 
-	std::cout << "Ajout de " << typePiece << " " << couleurDonne << " sur (" << posX << ", " << posY << ")" << std::endl;
+	std::cout << "Ajout de " << typePiece << " " << couleurDonne << " sur (" << posX_ << ", " << posY_ << ")" << std::endl;
 }
 
-std::tuple<bool, std::string> ModeleJeu::JeuPrincipal::deplacerPiece(int posX, int posY, std::string couleurJoueur, int nouvPosX, int nouvPosY) {
-	if (echiquier[posX][posY] == nullptr)
+std::tuple<bool, std::string> ModeleJeu::JeuPrincipal::deplacerPiece(int posX_, int posY_, std::string couleurJoueur, int nouvposX_, int nouvposY_) {
+	if (echiquier[posX_][posY_] == nullptr)
 	{
 		std::cout << "Aucune piece selectionnee" << std::endl;
 		return{ false, "Aucune piece selectionnee" };
 	}
-	if (echiquier[posX][posY]->getCouleur() != couleurJoueur)
+	if (echiquier[posX_][posY_]->getCouleur() != couleurJoueur)
 	{
 		std::cout << "La piece a deplacer ne correspond pas avec la couleur du joueur." << std::endl;
 		return{ false, "La piece a deplacer ne correspond pas avec la couleur du joueur." };
 	}
 	try {
-		if (echiquier[posX][posY].get()->verifierDeplacement(nouvPosX, nouvPosY, echiquier))
+		if (echiquier[posX_][posY_].get()->verifierDeplacement(nouvposX_, nouvposY_, echiquier))
 		{
 			{
-				Temporaire pieceTemporaire(posX, posY, nouvPosX, nouvPosY, echiquier);
+				Temporaire pieceTemporaire(posX_, posY_, nouvposX_, nouvposY_, echiquier);
 				if (pieceTemporaire.verifierEchec(couleurJoueur))
 				{
 					std::cout << "Ce deplacement place le joueur " << couleurJoueur << " en echec." << std::endl;
 					return { false, "Ce deplacement place le joueur " + couleurJoueur + " en echec." };
 				}
 			}
-			if (echiquier[nouvPosX][nouvPosY] != nullptr)
+			if (echiquier[nouvposX_][nouvposY_] != nullptr)
 			{
-				std::cout << "Piece eliminee a la position (" << nouvPosX << "," << nouvPosY << ")" << std::endl;
-				echiquier[nouvPosX][nouvPosY] = nullptr;
+				std::cout << "Piece eliminee a la position (" << nouvposX_ << "," << nouvposY_ << ")" << std::endl;
+				echiquier[nouvposX_][nouvposY_] = nullptr;
 			}
 
-			echiquier[posX][posY]->deplacer(nouvPosX, nouvPosY);
-			echiquier[nouvPosX][nouvPosY] = std::move(echiquier[posX][posY]);
-			echiquier[posX][posY] = nullptr;
-			std::cout << "Deplacement effectue de (" << posX << "," << posY << ") a (" << nouvPosX << "," << nouvPosY << ")" << std::endl;
+			echiquier[posX_][posY_]->deplacer(nouvposX_, nouvposY_);
+			echiquier[nouvposX_][nouvposY_] = std::move(echiquier[posX_][posY_]);
+			echiquier[posX_][posY_] = nullptr;
+			std::cout << "Deplacement effectue de (" << posX_ << "," << posY_ << ") a (" << nouvposX_ << "," << nouvposY_ << ")" << std::endl;
 			return{ true,"" };
 		}
 		else {
@@ -214,6 +222,7 @@ ModeleJeu::JeuPrincipal::JeuPrincipal(int placement) {
 		}
 	}
 	catch (const CompteurRoisException& e) {
+		std::cerr << "Erreur : " << e.what() << std::endl;
 		for (int i = 0; i < 8; ++i) {
 			for (int j = 0; j < 8; ++j) {
 				if (echiquier[i][j]) {

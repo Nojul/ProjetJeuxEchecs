@@ -1,3 +1,10 @@
+/**
+* Definition des classes des composants du jeu d'echecs, pieces et echiquier
+* \file   Pieces.h
+* \author Latendresse et Julien
+* \date   4 mai 2025
+* Cree le 6 avril 2025
+*/
 #pragma once
 #include "ui_ProjetJeuxEchecs.h"
 #include <memory> 
@@ -8,19 +15,19 @@ namespace Ui { class ProjetJeuxEchecsClass; };
 QT_END_NAMESPACE
 
 namespace ModeleJeu {
+	const int tailleEchiquier = 8;
 	class Piece {
 	protected:
-		int posX;
-		int posY;
+		int posX_;
+		int posY_;
 		std::string couleur_;
 
 	public:
-		Piece(int x, int y, std::string couleur) : posX(x), posY(y), couleur_(couleur) {}
+		Piece(int x, int y, std::string couleur) : posX_(x), posY_(y), couleur_(couleur) {}
 		virtual ~Piece() = default;
 		virtual bool verifierDeplacement(int x, int y, std::unique_ptr<Piece> echiquier[8][8]) = 0;
 		virtual std::string getCouleur();
 		void deplacer(int x, int y);
-
 	};
 
 	class Roi : public Piece {

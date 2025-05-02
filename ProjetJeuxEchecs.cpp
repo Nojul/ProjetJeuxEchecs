@@ -1,4 +1,11 @@
-﻿#include "ProjetJeuxEchecs.h"
+﻿/**
+* Implementation de la classe ProjetJeuxEchecs qui est le moddle de l'interface graphique
+* \file   ProjetJeuxEchecs.cpp
+* \author Latendresse et Julien
+* \date   4 mai 2025
+* Cree le 6 avril 2025
+*/
+#include "ProjetJeuxEchecs.h"
 #include <iostream>
 #include <QLabel>
 #include <qpushbutton.h>
@@ -22,10 +29,8 @@ interfaceGraphique::ProjetJeuxEchecs::ProjetJeuxEchecs(QWidget* parent)
 	messageErreur_->setAlignment(Qt::AlignBottom | Qt::AlignRight);
 	messageErreur_->setText("");
 
-	const int tailleEchiquier = 8;
-
-	for (int i = 0; i < tailleEchiquier; ++i) {		//lignes
-		for (int j = 0; j < tailleEchiquier; ++j) {	//colonnes
+	for (int i = 0; i < ModeleJeu::tailleEchiquier; ++i) {		//lignes
+		for (int j = 0; j < ModeleJeu::tailleEchiquier; ++j) {	//colonnes
 			this->buttons[i][j] = new QPushButton(this);
 			this->buttons[i][j]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
@@ -118,9 +123,9 @@ void interfaceGraphique::ProjetJeuxEchecs::clic(int x, int y)
 }
 void interfaceGraphique::ProjetJeuxEchecs::miseAJour()
 {
-	for (int i = 0; i < 8; ++i)
+	for (int i = 0; i < ModeleJeu::tailleEchiquier; ++i)
 	{
-		for (int j = 0; j < 8; ++j)
+		for (int j = 0; j < ModeleJeu::tailleEchiquier; ++j)
 		{
 			ModeleJeu::Piece* piece = jeu->getPiece(i, j);
 			QString imagePiece = "";
