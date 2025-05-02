@@ -44,7 +44,7 @@ interfaceGraphique::ProjetJeuxEchecs::ProjetJeuxEchecs(QWidget* parent)
 			}
 
 			gridLayout->addWidget(this->buttons[i][j], i, j);
-			connect(this->buttons[i][j], &QPushButton::clicked, this, [=]() {
+			connect(this->buttons[i][j], &QPushButton::clicked, this, [this, i, j]() {
 				clic(i, j);
 				qDebug() << "Bouton clique :" << i << "," << j;
 				});
@@ -116,15 +116,37 @@ void interfaceGraphique::ProjetJeuxEchecs::clic(int x, int y)
 		ySelectionne = -1;
 	}
 }
-
 void interfaceGraphique::ProjetJeuxEchecs::miseAJour()
 {
-	for (int i = 0; i < 8; ++i) {		//lignes
-		for (int j = 0; j < 8; ++j) {	//colonnes
+	for (int i = 0; i < 8; ++i)
+	{
+		for (int j = 0; j < 8; ++j)
+		{
 			ModeleJeu::Piece* piece = jeu->getPiece(i, j);
+			QString imagePiece = "";
+			QString styleBase;
+
+			if ((i + j) % 2 == 0) {
+				styleBase = "background-color: #f0d9b5; border: none;";
+			}
+			else {
+				styleBase = "background-color: #b58863; border: none;";
+			}
+
 			if (piece)
 			{
-				QString imagePiece;
+				QString colorStyle;
+				if (piece->getCouleur() == "Blanc")
+				{
+					colorStyle = "white;";
+				}
+				else
+				{
+					colorStyle = "black;";
+				}
+
+				styleBase += " color: " + colorStyle;
+
 				if (dynamic_cast<ModeleJeu::Roi*>(piece))
 				{
 					if (piece->getCouleur() == "Blanc")
@@ -136,7 +158,7 @@ void interfaceGraphique::ProjetJeuxEchecs::miseAJour()
 						imagePiece = "♚";
 					}
 				}
-				if (dynamic_cast<ModeleJeu::Tour*>(piece))
+				else if (dynamic_cast<ModeleJeu::Tour*>(piece))
 				{
 					if (piece->getCouleur() == "Blanc")
 					{
@@ -147,7 +169,7 @@ void interfaceGraphique::ProjetJeuxEchecs::miseAJour()
 						imagePiece = "♜";
 					}
 				}
-				if (dynamic_cast<ModeleJeu::Cavalier*>(piece))
+				else if (dynamic_cast<ModeleJeu::Cavalier*>(piece))
 				{
 					if (piece->getCouleur() == "Blanc")
 					{
@@ -159,11 +181,14 @@ void interfaceGraphique::ProjetJeuxEchecs::miseAJour()
 					}
 				}
 				buttons[i][j]->setText(imagePiece);
+				buttons[i][j]->setStyleSheet(styleBase);
 			}
 			else
 			{
 				buttons[i][j]->setText("");
+				buttons[i][j]->setStyleSheet(styleBase);
 			}
 		}
 	}
 }
+

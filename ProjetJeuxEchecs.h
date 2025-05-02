@@ -1,5 +1,4 @@
-﻿#pragma once
-#include "Pieces.h"
+﻿#include "Pieces.h"
 #include "ui_ProjetJeuxEchecs.h"
 #include <memory> 
 #include <QLabel>
@@ -18,6 +17,9 @@ namespace interfaceGraphique {
 	public:
 		ProjetJeuxEchecs(QWidget* parent = nullptr);
 		~ProjetJeuxEchecs();
+		ProjetJeuxEchecs(const ProjetJeuxEchecs&) = delete;
+		ProjetJeuxEchecs& operator=(const ProjetJeuxEchecs&) = delete;
+
 
 		void clic(int x, int y);
 		void miseAJour();
