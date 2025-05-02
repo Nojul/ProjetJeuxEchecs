@@ -1,8 +1,9 @@
 ﻿#pragma once
-#include "ui_ProjetJeuxEchecs.h"
 #include "Pieces.h"
-#include <qpushbutton.h>
+#include "ui_ProjetJeuxEchecs.h"
 #include <memory> 
+#include <QLabel>
+#include <qpushbutton.h>
 #include <QtWidgets/QMainWindow>
 
 QT_BEGIN_NAMESPACE
@@ -24,8 +25,10 @@ namespace interfaceGraphique {
 	private:
 		Ui::ProjetJeuxEchecsClass* ui;
 		QPushButton* buttons[8][8];
-		ModeleJeu::JeuPrincipal* jeu = nullptr;
+		ModeleJeu::JeuPrincipal* jeu;
 		std::string joueur = "Blanc";
+		QLabel* messageErreur_ = nullptr;
 	};
+
 }
 

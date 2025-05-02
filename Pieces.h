@@ -20,6 +20,7 @@ namespace ModeleJeu {
 		virtual bool verifierDeplacement(int x, int y, std::unique_ptr<Piece> echiquier[8][8]) = 0;
 		virtual std::string getCouleur();
 		void deplacer(int x, int y);
+
 	};
 
 	class Roi : public Piece {
@@ -44,6 +45,7 @@ namespace ModeleJeu {
 		Tour(int posXDebut, int posYDebut, std::string couleur) : Piece(posXDebut, posYDebut, couleur) {}
 
 		bool verifierDeplacement(int x, int y, std::unique_ptr<Piece> echiquier[8][8]) override;
+
 	};
 
 	class Cavalier : public Piece {
@@ -58,7 +60,7 @@ namespace ModeleJeu {
 		JeuPrincipal(int placement);
 
 		void ajouterPiece(int posX, int posY, std::string couleurDonne, std::string typePiece);
-		void deplacerPiece(int posX, int posY, std::string couleurJoueur, int nouvPosX, int nouvPosY);
+		std::tuple<bool, std::string> deplacerPiece(int posX, int posY, std::string couleurJoueur, int nouvPosX, int nouvPosY);
 		Piece* getPiece(int x, int y);
 
 	private:
@@ -69,15 +71,16 @@ namespace ModeleJeu {
 	class Temporaire {
 	public:
 		Temporaire(int positionX, int positionY, int nouvPositionX, int nouvPositionY, std::unique_ptr<Piece>(&echiquier)[8][8]);
-
 		~Temporaire();
+		Piece* getTemporaire();
+		bool verifierEchec(std::string couleurJouer);
 
 	private:
 		int positionX_;
 		int positionY_;
 		int nouvPositionX_;
 		int nouvPositionY_;
-		std::unique_ptr<Piece> (&echiquier_)[8][8];
+		std::unique_ptr<Piece>(&echiquier_)[8][8];
 		std::unique_ptr<Piece> piece_;
 		std::unique_ptr<Piece> pieceCapturee_;
 	};

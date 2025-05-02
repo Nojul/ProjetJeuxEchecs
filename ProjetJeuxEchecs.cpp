@@ -1,14 +1,14 @@
 ﻿#include "ProjetJeuxEchecs.h"
+#include <iostream>
 #include <QLabel>
-#include <QString>
 #include <qpushbutton.h>
-#include <QVBoxLayout> 
+#include <QString>
 #include <QTimer>
-
+#include <QVBoxLayout> 
 
 interfaceGraphique::ProjetJeuxEchecs::ProjetJeuxEchecs(QWidget* parent)
 	: QMainWindow(parent)
-	, ui(new Ui::ProjetJeuxEchecsClass())
+	, ui(new Ui::ProjetJeuxEchecsClass()), jeu(nullptr)
 {
 	ui->setupUi(this);
 	this->resize(800, 800);
@@ -18,18 +18,17 @@ interfaceGraphique::ProjetJeuxEchecs::ProjetJeuxEchecs(QWidget* parent)
 	//centralWidget->setLayout(gridLayout);
 	setCentralWidget(centralWidget);
 
+	messageErreur_ = new QLabel(this);
+	messageErreur_->setStyleSheet("color: red; font-weight: bold;");
+	messageErreur_->setAlignment(Qt::AlignBottom | Qt::AlignRight);
+	messageErreur_->setText("");
+
 	const int tailleEchiquier = 8;
 
 	for (int i = 0; i < tailleEchiquier; ++i) {		//lignes
 		for (int j = 0; j < tailleEchiquier; ++j) {	//colonnes
 			this->buttons[i][j] = new QPushButton(this);
 			this->buttons[i][j]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
-			//code pour afficher du texte sur des bouttons
-			/*buttons[i][j]->setText("R");
-			QFont font = buttons[i][j]->font();
-			font.setPointSize(20);
-			buttons[i][j]->setFont(font);*/
 
 			QFont taille = buttons[i][j]->font();
 			taille.setPointSize(40);
@@ -51,13 +50,24 @@ interfaceGraphique::ProjetJeuxEchecs::ProjetJeuxEchecs(QWidget* parent)
 				});
 		}
 	}
-	jeu = new ModeleJeu::JeuPrincipal(1);
-	miseAJour();
 
-	messageErreur_ = new QLabel(this);
-	//messageErreur_->setStyleSheet("color: red");
-	messageErreur_->setAlignment(Qt::AlignBottom | Qt::AlignRight);
-	messageErreur_->setText("");
+	try {
+		jeu = new ModeleJeu::JeuPrincipal(1);
+	}
+	catch (const ModeleJeu::CompteurRoisException& e) {
+		std::cerr << "Error creating game: " << e.what() << std::endl;
+		messageErreur_->setText(QString::fromStdString(e.what()));
+		messageErreur_->show();
+	}
+	catch (const std::exception& e) {
+		std::cerr << "Caught exception: " << e.what() << std::endl;
+		messageErreur_->setText(QString::fromStdString(e.what()));
+		messageErreur_->show();
+	}
+
+	if (jeu != nullptr) {
+		miseAJour();
+	}
 
 	QVBoxLayout* layoutPrincipal = new QVBoxLayout();
 	layoutPrincipal->addLayout(gridLayout);
@@ -82,10 +92,10 @@ void interfaceGraphique::ProjetJeuxEchecs::clic(int x, int y)
 	}
 	else
 	{
-		std::tuple<bool, std::string> deplacement = jeu -> deplacerPiece(xSelectionne, ySelectionne, joueur, x, y);
+		std::tuple<bool, std::string> deplacement = jeu->deplacerPiece(xSelectionne, ySelectionne, joueur, x, y);
 		qDebug() << "deuxieme clic";
-		miseAJour(); 
-		if (get<0>(deplacement)) 
+		miseAJour();
+		if (get<0>(deplacement))
 		{
 			if (joueur == "Blanc")
 			{
@@ -96,7 +106,7 @@ void interfaceGraphique::ProjetJeuxEchecs::clic(int x, int y)
 				joueur = "Blanc";
 			}
 		}
-		else 
+		else
 		{
 			messageErreur_->setText(QString::fromStdString(get<1>(deplacement)));
 			messageErreur_->show();
