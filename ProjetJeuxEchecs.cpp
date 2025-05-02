@@ -15,7 +15,6 @@ interfaceGraphique::ProjetJeuxEchecs::ProjetJeuxEchecs(QWidget* parent)
 	QGridLayout* gridLayout = new QGridLayout();
 	gridLayout->setSpacing(0);
 	QWidget* centralWidget = new QWidget(this);
-	//centralWidget->setLayout(gridLayout);
 	setCentralWidget(centralWidget);
 
 	messageErreur_ = new QLabel(this);
@@ -29,6 +28,7 @@ interfaceGraphique::ProjetJeuxEchecs::ProjetJeuxEchecs(QWidget* parent)
 		for (int j = 0; j < tailleEchiquier; ++j) {	//colonnes
 			this->buttons[i][j] = new QPushButton(this);
 			this->buttons[i][j]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
 
 			QFont taille = buttons[i][j]->font();
 			taille.setPointSize(40);
