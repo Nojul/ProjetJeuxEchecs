@@ -19,6 +19,11 @@ void ModeleJeu::Piece::deplacer(int x, int y) {
 	posY_ = y;
 }
 
+ModeleJeu::Piece::~Piece()
+{
+	std::cout << "Piece detruit a " << posX_ << "," << posY_ << std::endl;
+}
+
 ModeleJeu::Roi::~Roi() {
 	compteurRoi_--;
 }
@@ -219,7 +224,7 @@ bool ModeleJeu::Temporaire::verifierEchec(std::string couleurJoueur)
 		for (int j = 0; j < 8; j++)
 		{
 			Piece* pieceAdverse = echiquier_[i][j].get();
-			if (pieceAdverse and pieceAdverse->estMouvementValide(positionRoiX, positionRoiY) and ModeleJeu::JeuPrincipal::verifierContraintesEchiquier(i, j, positionRoiX, positionRoiX) and pieceAdverse->getCouleur() != couleurJoueur)
+			if (pieceAdverse and pieceAdverse->estMouvementValide(positionRoiX, positionRoiY) and pieceAdverse->getCouleur() != couleurJoueur)
 			{
 				return true;
 			}

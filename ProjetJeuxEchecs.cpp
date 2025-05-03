@@ -15,7 +15,8 @@
 
 interfaceGraphique::ProjetJeuxEchecs::ProjetJeuxEchecs(QWidget* parent)
 	: QMainWindow(parent)
-	, ui(new Ui::ProjetJeuxEchecsClass()), jeu(nullptr)
+	, ui(new Ui::ProjetJeuxEchecsClass())
+	, jeu_(nullptr)
 {
 	ui->setupUi(this);
 	const int windowSize = 800;
@@ -61,7 +62,7 @@ interfaceGraphique::ProjetJeuxEchecs::ProjetJeuxEchecs(QWidget* parent)
 	}
 
 	try {
-		jeu = new ModeleJeu::JeuPrincipal(1);
+		jeu_ = std::make_unique<ModeleJeu::JeuPrincipal>(1);
 	}
 	catch (const ModeleJeu::CompteurRoisException& e) {
 		std::cerr << "Error creating game: " << e.what() << std::endl;
@@ -74,7 +75,7 @@ interfaceGraphique::ProjetJeuxEchecs::ProjetJeuxEchecs(QWidget* parent)
 		messageErreur_->show();
 	}
 
-	if (jeu != nullptr) {
+	if (jeu_ != nullptr) {
 		miseAJour();
 	}
 
@@ -101,7 +102,7 @@ void interfaceGraphique::ProjetJeuxEchecs::clic(int x, int y)
 	}
 	else
 	{
-		std::tuple<bool, std::string> deplacement = jeu->deplacerPiece(xSelectionne, ySelectionne, joueur, x, y);
+		std::tuple<bool, std::string> deplacement = jeu_->deplacerPiece(xSelectionne, ySelectionne, joueur, x, y);
 		qDebug() << "deuxieme clic";
 		miseAJour();
 		if (get<0>(deplacement))
@@ -131,7 +132,7 @@ void interfaceGraphique::ProjetJeuxEchecs::miseAJour()
 	{
 		for (int j = 0; j < ModeleJeu::tailleEchiquier; ++j)
 		{
-			ModeleJeu::Piece* piece = jeu->getPiece(i, j);
+			ModeleJeu::Piece* piece = jeu_->getPiece(i, j);
 			QString imagePiece = "";
 			QString styleBase;
 

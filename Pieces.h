@@ -26,12 +26,13 @@ namespace ModeleJeu {
 
 	public:
 		Piece(int x, int y, std::string couleur) : posX_(x), posY_(y), couleur_(couleur) {}
-		virtual ~Piece() = default;
+		virtual ~Piece();
 		virtual bool estMouvementValide(int x, int y) = 0;
 		std::string getCouleur();
 		int getPositionX() const;
 		int getPositionY() const;
 		void deplacer(int x, int y);
+
 	};
 
 	class Roi : public Piece {
@@ -66,16 +67,15 @@ namespace ModeleJeu {
 	public:
 		JeuPrincipal(int placement);
 
-		static bool verifierContraintesEchiquier(int posX, int posY, int nouvPosX, int nouvPosY);
+		bool verifierContraintesEchiquier(int posX, int posY, int nouvPosX, int nouvPosY);
 		void ajouterPiece(int posX, int posY, std::string couleurDonne, std::string typePiece);
 		std::tuple<bool, std::string> deplacerPiece(int posX, int posY, std::string couleurJoueur, int nouvPosX, int nouvPosY);
 		Piece* getPiece(int x, int y);
 		friend class Temporaire;
 
 	private:
-		inline static std::unique_ptr<Piece> echiquier_[tailleEchiquier][tailleEchiquier];
+		std::unique_ptr<Piece> echiquier_[tailleEchiquier][tailleEchiquier];
 	};
-
 
 	//Classe RAII permettant de bouger une piece temporairement
 	class Temporaire {

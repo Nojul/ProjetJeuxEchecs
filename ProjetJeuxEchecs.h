@@ -26,15 +26,13 @@ namespace interfaceGraphique {
 		~ProjetJeuxEchecs();
 		ProjetJeuxEchecs(const ProjetJeuxEchecs&) = delete;
 		ProjetJeuxEchecs& operator=(const ProjetJeuxEchecs&) = delete;
-
-
 		void clic(int x, int y);
 		void miseAJour();
 
 	private:
 		Ui::ProjetJeuxEchecsClass* ui;
-		QPushButton* buttons[8][8];
-		ModeleJeu::JeuPrincipal* jeu;
+		QPushButton* buttons[ModeleJeu::tailleEchiquier][ModeleJeu::tailleEchiquier];
+		std::unique_ptr<ModeleJeu::JeuPrincipal> jeu_;
 		std::string joueur = "Blanc";
 		QLabel* messageErreur_ = nullptr;
 	};

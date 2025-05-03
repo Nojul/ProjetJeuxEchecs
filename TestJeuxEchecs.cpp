@@ -31,5 +31,4 @@ TEST(Test, exempleDeTest2)
 {
 	EXPECT_FALSE(1 == 2);
 }
-
 #endif
