@@ -207,9 +207,9 @@ bool ModeleJeu::Temporaire::verifierEchec(std::string couleurJoueur)
 {
 	int positionRoiX = -1;
 	int positionRoiY = -1;
-	for (int i = 0; i < 8; i++)
+	for (int i = 0; i < ModeleJeu::tailleEchiquier; i++)
 	{
-		for (int j = 0; j < 8; j++)
+		for (int j = 0; j < ModeleJeu::tailleEchiquier; j++)
 		{
 			Piece* piece = echiquier_[i][j].get();
 			if (piece and dynamic_cast<ModeleJeu::Roi*>(piece) and piece->getCouleur() == couleurJoueur)

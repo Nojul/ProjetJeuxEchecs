@@ -170,7 +170,7 @@ void interfaceGraphique::ProjetJeuxEchecs::miseAJour()
 
 			ModeleJeu::Piece* selected = jeu_->getPieceSelectionnee();
 			if (selected && selected->getPositionX() == i && selected->getPositionY() == j) {
-				styleBase += " border: 4px solid red;";
+				styleBase += " border: 4px solid green;";
 			}
 			else {
 				styleBase += " border: none;";

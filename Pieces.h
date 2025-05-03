@@ -83,7 +83,7 @@ namespace ModeleJeu {
 	//Classe RAII permettant de bouger une piece temporairement
 	class Temporaire {
 	public:
-		Temporaire(int positionX, int positionY, int nouvPositionX, int nouvPositionY, std::unique_ptr<Piece>(&echiquier)[8][8]);
+		Temporaire(int positionX, int positionY, int nouvPositionX, int nouvPositionY, std::unique_ptr<Piece>(&echiquier)[ModeleJeu::tailleEchiquier][ModeleJeu::tailleEchiquier]);
 		~Temporaire();
 		Piece* getTemporaire();
 		bool verifierEchec(std::string couleurJouer);
