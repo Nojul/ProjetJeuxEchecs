@@ -3,7 +3,7 @@
  * \file   TestJeuxEchecs.cpp
  * \author Latendresse et Julien
  * \date   4 mai 2025
- * Créé le 6 avril 2025
+ * Cree le 6 avril 2025
  */
 
 #include "Pieces.h"
