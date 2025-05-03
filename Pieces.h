@@ -15,7 +15,9 @@ namespace Ui { class ProjetJeuxEchecsClass; };
 QT_END_NAMESPACE
 
 namespace ModeleJeu {
+
 	const int tailleEchiquier = 8;
+
 	class Piece {
 	protected:
 		int posX_;
@@ -25,8 +27,10 @@ namespace ModeleJeu {
 	public:
 		Piece(int x, int y, std::string couleur) : posX_(x), posY_(y), couleur_(couleur) {}
 		virtual ~Piece() = default;
-		virtual bool verifierDeplacement(int x, int y, std::unique_ptr<Piece> echiquier[8][8]) = 0;
-		virtual std::string getCouleur();
+		virtual bool estMouvementValide(int x, int y) = 0;
+		std::string getCouleur();
+		int getPositionX() const;
+		int getPositionY() const;
 		void deplacer(int x, int y);
 	};
 
@@ -34,8 +38,7 @@ namespace ModeleJeu {
 	public:
 		Roi(int posXDebut, int posYDebut, std::string couleur);
 		~Roi();
-
-		bool verifierDeplacement(int x, int y, std::unique_ptr<Piece> echiquier[8][8]) override;
+		bool estMouvementValide(int x, int y) override;
 		int getCompteurRoi();
 
 	private:
@@ -50,29 +53,29 @@ namespace ModeleJeu {
 	class Tour : public Piece {
 	public:
 		Tour(int posXDebut, int posYDebut, std::string couleur) : Piece(posXDebut, posYDebut, couleur) {}
-
-		bool verifierDeplacement(int x, int y, std::unique_ptr<Piece> echiquier[8][8]) override;
-
+		bool estMouvementValide(int x, int y) override;
 	};
 
 	class Cavalier : public Piece {
 	public:
 		Cavalier(int posXDebut, int posYDebut, std::string couleur) : Piece(posXDebut, posYDebut, couleur) {}
-
-		bool verifierDeplacement(int x, int y, std::unique_ptr<Piece> echiquier[8][8]) override;
+		bool estMouvementValide(int x, int y) override;
 	};
 
 	class JeuPrincipal {
 	public:
 		JeuPrincipal(int placement);
 
+		static bool verifierContraintesEchiquier(int posX, int posY, int nouvPosX, int nouvPosY);
 		void ajouterPiece(int posX, int posY, std::string couleurDonne, std::string typePiece);
 		std::tuple<bool, std::string> deplacerPiece(int posX, int posY, std::string couleurJoueur, int nouvPosX, int nouvPosY);
 		Piece* getPiece(int x, int y);
+		friend class Temporaire;
 
 	private:
-		std::unique_ptr<Piece> echiquier[8][8];
+		inline static std::unique_ptr<Piece> echiquier_[tailleEchiquier][tailleEchiquier];
 	};
+
 
 	//Classe RAII permettant de bouger une piece temporairement
 	class Temporaire {
@@ -87,7 +90,7 @@ namespace ModeleJeu {
 		int positionY_;
 		int nouvPositionX_;
 		int nouvPositionY_;
-		std::unique_ptr<Piece>(&echiquier_)[8][8];
+		std::unique_ptr<Piece>(&echiquier_)[tailleEchiquier][tailleEchiquier];
 		std::unique_ptr<Piece> piece_;
 		std::unique_ptr<Piece> pieceCapturee_;
 	};

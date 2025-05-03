@@ -18,9 +18,12 @@ interfaceGraphique::ProjetJeuxEchecs::ProjetJeuxEchecs(QWidget* parent)
 	, ui(new Ui::ProjetJeuxEchecsClass()), jeu(nullptr)
 {
 	ui->setupUi(this);
-	this->resize(800, 800);
+	const int windowSize = 800;
+	this->setFixedSize(windowSize, windowSize);
+
 	QGridLayout* gridLayout = new QGridLayout();
 	gridLayout->setSpacing(0);
+
 	QWidget* centralWidget = new QWidget(this);
 	setCentralWidget(centralWidget);
 
@@ -47,6 +50,7 @@ interfaceGraphique::ProjetJeuxEchecs::ProjetJeuxEchecs(QWidget* parent)
 				this->buttons[i][j]->setStyleSheet("background-color: #b58863; border: none;");
 
 			}
+
 
 			gridLayout->addWidget(this->buttons[i][j], i, j);
 			connect(this->buttons[i][j], &QPushButton::clicked, this, [this, i, j]() {
