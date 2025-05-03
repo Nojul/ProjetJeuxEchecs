@@ -35,26 +35,24 @@ interfaceGraphique::ProjetJeuxEchecs::ProjetJeuxEchecs(QWidget* parent)
 
 	for (int i = 0; i < ModeleJeu::tailleEchiquier; ++i) {		//lignes
 		for (int j = 0; j < ModeleJeu::tailleEchiquier; ++j) {	//colonnes
-			this->buttons[i][j] = new QPushButton(this);
-			this->buttons[i][j]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+			this->boutons[i][j] = new QPushButton(this);
+			this->boutons[i][j]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-
-			QFont taille = buttons[i][j]->font();
+			QFont taille = boutons[i][j]->font();
 			taille.setPointSize(40);
-			buttons[i][j]->setFont(taille);
+			boutons[i][j]->setFont(taille);
 
 			if ((i + j) % 2 == 0) {
-				this->buttons[i][j]->setStyleSheet("background-color: #f0d9b5; border: none;");
+				this->boutons[i][j]->setStyleSheet("background-color: #f0d9b5; border: none;");
 
 			}
 			else {
-				this->buttons[i][j]->setStyleSheet("background-color: #b58863; border: none;");
+				this->boutons[i][j]->setStyleSheet("background-color: #b58863; border: none;");
 
 			}
 
-
-			gridLayout->addWidget(this->buttons[i][j], i, j);
-			connect(this->buttons[i][j], &QPushButton::clicked, this, [this, i, j]() {
+			gridLayout->addWidget(this->boutons[i][j], i, j);
+			connect(this->boutons[i][j], &QPushButton::clicked, this, [this, i, j]() {
 				clic(i, j);
 				qDebug() << "Bouton clique :" << i << "," << j;
 				});
@@ -90,115 +88,99 @@ interfaceGraphique::ProjetJeuxEchecs::~ProjetJeuxEchecs()
 	delete ui;
 }
 
-int xSelectionne = -1;
-int ySelectionne = -1;
 void interfaceGraphique::ProjetJeuxEchecs::clic(int x, int y)
 {
-	if (xSelectionne == -1)
-	{
-		xSelectionne = x;
-		ySelectionne = y;
-		qDebug() << "premier clic";
+	if (jeu_->getPiece(x, y) != nullptr and jeu_->getPiece(x, y)->getCouleur() == joueur) {
+		jeu_.get()->setPieceSelectionnee(jeu_->getPiece(x, y));
 	}
-	else
-	{
+
+	else if (jeu_.get()->getPieceSelectionnee() == nullptr) { 	//Si aucune piece selectionnee
+		messageErreur_->setText("Aucune piece selectionnee");
+		messageErreur_->show();
+		QTimer::singleShot(2000, messageErreur_, &QLabel::hide);
+	}
+	else { // verifier deplacement de la piece selectione
+		int xSelectionne = jeu_.get()->getPieceSelectionnee()->getPositionX();
+		int ySelectionne = jeu_.get()->getPieceSelectionnee()->getPositionY();
 		std::tuple<bool, std::string> deplacement = jeu_->deplacerPiece(xSelectionne, ySelectionne, joueur, x, y);
-		qDebug() << "deuxieme clic";
-		miseAJour();
 		if (get<0>(deplacement))
 		{
-			if (joueur == "Blanc")
-			{
-				joueur = "Noir";
-			}
-			else
-			{
-				joueur = "Blanc";
-			}
+			jeu_.get()->setPieceSelectionnee(nullptr);
+
+			if (joueur == "Blanc") { joueur = "Noir"; }
+			else { joueur = "Blanc"; }
 		}
-		else
-		{
+		else {
 			messageErreur_->setText(QString::fromStdString(get<1>(deplacement)));
 			messageErreur_->show();
 			QTimer::singleShot(2000, messageErreur_, &QLabel::hide);
 		}
-		xSelectionne = -1;
-		ySelectionne = -1;
 	}
+	miseAJour();
 }
+
 void interfaceGraphique::ProjetJeuxEchecs::miseAJour()
 {
-	for (int i = 0; i < ModeleJeu::tailleEchiquier; ++i)
-	{
-		for (int j = 0; j < ModeleJeu::tailleEchiquier; ++j)
-		{
+	for (int i = 0; i < ModeleJeu::tailleEchiquier; ++i) {
+		for (int j = 0; j < ModeleJeu::tailleEchiquier; ++j) {
 			ModeleJeu::Piece* piece = jeu_->getPiece(i, j);
 			QString imagePiece = "";
 			QString styleBase;
 
 			if ((i + j) % 2 == 0) {
-				styleBase = "background-color: #f0d9b5; border: none;";
+				styleBase = "background-color: #f0d9b5;";
 			}
 			else {
-				styleBase = "background-color: #b58863; border: none;";
+				styleBase = "background-color: #b58863;";
 			}
 
-			if (piece)
-			{
-				QString colorStyle;
-				if (piece->getCouleur() == "Blanc")
-				{
-					colorStyle = "white;";
+			if (piece) {
+				if (piece->getCouleur() == "Blanc") {
+					styleBase += " color: white;";
 				}
-				else
-				{
-					colorStyle = "black;";
+				else {
+					styleBase += " color: black;";
 				}
 
-				styleBase += " color: " + colorStyle;
-
-				if (dynamic_cast<ModeleJeu::Roi*>(piece))
-				{
-					if (piece->getCouleur() == "Blanc")
-					{
+				if (dynamic_cast<ModeleJeu::Roi*>(piece)) {
+					if (piece->getCouleur() == "Blanc") {
 						imagePiece = "♔";
 					}
-					else
-					{
+					else {
 						imagePiece = "♚";
 					}
 				}
-				else if (dynamic_cast<ModeleJeu::Tour*>(piece))
-				{
-					if (piece->getCouleur() == "Blanc")
-					{
+				else if (dynamic_cast<ModeleJeu::Tour*>(piece)) {
+					if (piece->getCouleur() == "Blanc") {
 						imagePiece = "♖";
 					}
-					else
-					{
+					else {
 						imagePiece = "♜";
 					}
 				}
-				else if (dynamic_cast<ModeleJeu::Cavalier*>(piece))
-				{
-					if (piece->getCouleur() == "Blanc")
-					{
+				else if (dynamic_cast<ModeleJeu::Cavalier*>(piece)) {
+					if (piece->getCouleur() == "Blanc") {
 						imagePiece = "♘";
 					}
-					else
-					{
+					else {
 						imagePiece = "♞";
 					}
 				}
-				buttons[i][j]->setText(imagePiece);
-				buttons[i][j]->setStyleSheet(styleBase);
 			}
-			else
-			{
-				buttons[i][j]->setText("");
-				buttons[i][j]->setStyleSheet(styleBase);
+
+			ModeleJeu::Piece* selected = jeu_->getPieceSelectionnee();
+			if (selected && selected->getPositionX() == i && selected->getPositionY() == j) {
+				styleBase += " border: 4px solid red;";
 			}
+			else {
+				styleBase += " border: none;";
+			}
+
+			boutons[i][j]->setText(imagePiece);
+			boutons[i][j]->setStyleSheet(styleBase);
 		}
 	}
+
+
 }
 

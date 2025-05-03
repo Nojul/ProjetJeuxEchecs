@@ -31,7 +31,7 @@ namespace ModeleJeu {
 		std::string getCouleur();
 		int getPositionX() const;
 		int getPositionY() const;
-		void deplacer(int x, int y);
+		void setPosition(int x, int y);
 
 	};
 
@@ -71,9 +71,12 @@ namespace ModeleJeu {
 		void ajouterPiece(int posX, int posY, std::string couleurDonne, std::string typePiece);
 		std::tuple<bool, std::string> deplacerPiece(int posX, int posY, std::string couleurJoueur, int nouvPosX, int nouvPosY);
 		Piece* getPiece(int x, int y);
+		void setPieceSelectionnee(Piece* piece);
+		Piece* getPieceSelectionnee() const;
 		friend class Temporaire;
 
 	private:
+		Piece* pieceSelectionnee_ = nullptr;
 		std::unique_ptr<Piece> echiquier_[tailleEchiquier][tailleEchiquier];
 	};
 

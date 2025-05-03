@@ -14,7 +14,7 @@ std::string ModeleJeu::Piece::getCouleur() { return couleur_; }
 int ModeleJeu::Piece::getPositionX() const { return posX_; }
 int ModeleJeu::Piece::getPositionY() const { return posY_; }
 
-void ModeleJeu::Piece::deplacer(int x, int y) {
+void ModeleJeu::Piece::setPosition(int x, int y) {
 	posX_ = x;
 	posY_ = y;
 }
@@ -152,7 +152,7 @@ std::tuple<bool, std::string> ModeleJeu::JeuPrincipal::deplacerPiece(int posX_, 
 				echiquier_[nouvposX_][nouvposY_] = nullptr;
 			}
 
-			echiquier_[posX_][posY_]->deplacer(nouvposX_, nouvposY_);
+			echiquier_[posX_][posY_]->setPosition(nouvposX_, nouvposY_);
 			echiquier_[nouvposX_][nouvposY_] = std::move(echiquier_[posX_][posY_]);
 			echiquier_[posX_][posY_] = nullptr;
 			std::cout << "Deplacement effectue de (" << posX_ << "," << posY_ << ") a (" << nouvposX_ << "," << nouvposY_ << ")" << std::endl;
@@ -171,6 +171,16 @@ std::tuple<bool, std::string> ModeleJeu::JeuPrincipal::deplacerPiece(int posX_, 
 ModeleJeu::Piece* ModeleJeu::JeuPrincipal::getPiece(int x, int y)
 {
 	return echiquier_[x][y].get();
+}
+
+ModeleJeu::Piece* ModeleJeu::JeuPrincipal::getPieceSelectionnee() const
+{
+	return pieceSelectionnee_;
+}
+
+void ModeleJeu::JeuPrincipal::setPieceSelectionnee(Piece* piece)
+{
+	pieceSelectionnee_ = piece;
 }
 
 ModeleJeu::Temporaire::Temporaire(int positionX, int positionY, int nouvPositionX, int nouvPositionY, std::unique_ptr<Piece>(&echiquier)[8][8])
