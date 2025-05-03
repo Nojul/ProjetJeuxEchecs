@@ -26,7 +26,7 @@ namespace ModeleJeu {
 
 	public:
 		Piece(int x, int y, std::string couleur) : posX_(x), posY_(y), couleur_(couleur) {}
-		virtual ~Piece();
+		virtual ~Piece() = default;
 		virtual bool estMouvementValide(int x, int y) = 0;
 		std::string getCouleur();
 		int getPositionX() const;

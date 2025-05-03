@@ -19,11 +19,6 @@ void ModeleJeu::Piece::deplacer(int x, int y) {
 	posY_ = y;
 }
 
-ModeleJeu::Piece::~Piece()
-{
-	std::cout << "Piece detruit a " << posX_ << "," << posY_ << std::endl;
-}
-
 ModeleJeu::Roi::~Roi() {
 	compteurRoi_--;
 }
@@ -87,7 +82,7 @@ void ModeleJeu::JeuPrincipal::ajouterPiece(int posX_, int posY_, std::string cou
 		echiquier_[posX_][posY_] = std::make_unique<Cavalier>(posX_, posY_, couleurDonne);
 	}
 
-	std::cout << "Ajout de " << typePiece << " " << couleurDonne << " sur (" << posX_ << ", " << posY_ << ")" << std::endl;
+	std::cout << "  Ajout de " << typePiece << " " << couleurDonne << " sur (" << posX_ << ", " << posY_ << ")" << std::endl;
 }
 
 
@@ -258,15 +253,15 @@ ModeleJeu::JeuPrincipal::JeuPrincipal(int placement) {
 	try {
 		switch (placement) {
 		case 0: // La Bourdonnais vs. McDonnell, 1834
-			std::cout << "(0) Debut de la partie : La Bourdonnais vs. McDonnell, 1834" << std::endl;
+			std::cout << "\n========= La Bourdonnais vs. McDonnell, 1834 =========" << std::endl;
 			ajouterPiece(0, 1, "Blanc", "Tour");
 			ajouterPiece(1, 0, "Noir", "Cavalier");
-			ajouterPiece(3, 1, "Noir", "Roi");
+			ajouterPiece(3, 0, "Noir", "Roi");
 			ajouterPiece(3, 2, "Blanc", "Roi");
 			break;
 
 		case 1: // Karpov vs. Ftacnik, 1988
-			std::cout << "(1) Debut de la partie : Karpov vs. Ftacnik, 1988" << std::endl;
+			std::cout << "\n=========     Karpov vs. Ftacnik, 1988      =========" << std::endl;
 			ajouterPiece(1, 5, "Blanc", "Tour");
 			ajouterPiece(2, 1, "Noir", "Cavalier");
 			ajouterPiece(5, 7, "Noir", "Roi");
@@ -274,7 +269,7 @@ ModeleJeu::JeuPrincipal::JeuPrincipal(int placement) {
 			break;
 
 		case 2: // J. Polgar vs. Kasparov, 1996
-			std::cout << "Debut de la partie : J. Polgar vs. Kasparov, 1996" << std::endl;
+			std::cout << "\n=========   J. Polgar vs. Kasparov, 1996    =========" << std::endl;
 			ajouterPiece(0, 4, "Blanc", "Tour");
 			ajouterPiece(7, 6, "Noir", "Tour");
 			ajouterPiece(6, 4, "Noir", "Cavalier");
@@ -283,7 +278,7 @@ ModeleJeu::JeuPrincipal::JeuPrincipal(int placement) {
 			break;
 
 		case 3: // Alekhine vs. Capablanca, 1927
-			std::cout << "Debut de la partie : Alekhine vs. Capablanca, 1927" << std::endl;
+			std::cout << "\n=========  Alekhine vs. Capablanca, 1927    =========" << std::endl;
 			ajouterPiece(6, 1, "Blanc", "Tour");
 			ajouterPiece(1, 0, "Noir", "Tour");
 			ajouterPiece(1, 3, "Noir", "Cavalier");
