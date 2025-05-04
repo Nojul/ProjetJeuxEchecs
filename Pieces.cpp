@@ -10,13 +10,13 @@
 #include <cmath>
 #include <iostream>
 
-std::string ModeleJeu::Piece::getCouleur() const { return couleur_; }
+ModeleJeu::Couleur ModeleJeu::Piece::getCouleur() const { return couleur_; }
 
 ModeleJeu::Roi::~Roi() {
 	compteurRoi_--;
 }
 
-ModeleJeu::Roi::Roi(std::string couleur) : Piece(couleur) {
+ModeleJeu::Roi::Roi(Couleur couleur) : Piece(couleur) {
 	if (compteurRoi_ < 2) {
 		compteurRoi_++;
 	}
@@ -45,14 +45,15 @@ bool ModeleJeu::Cavalier::estMouvementValide(const Coordonnee& depart, const Coo
 	return (deltaX == 2 && deltaY == 1) || (deltaX == 1 && deltaY == 2);
 }
 
-void ModeleJeu::JeuPrincipal::ajouterPiece(const Coordonnee& position, std::string couleurDonne, std::string typePiece) {
+void ModeleJeu::JeuPrincipal::ajouterPiece(const Coordonnee& position, Couleur couleur, TypePiece type) {
 	if (position.x < 0 || position.x >= tailleEchiquier || position.y < 0 || position.y >= tailleEchiquier) {
 		throw std::out_of_range("Position hors des limites du plateau");
 	}
 
-	if (typePiece == "Roi") {
+	switch (type) {
+	case TypePiece::Roi:
 		try {
-			auto nouvellePiece = std::make_unique<Roi>(couleurDonne);
+			auto nouvellePiece = std::make_unique<Roi>(couleur);
 			echiquier_[position.x][position.y] = std::move(nouvellePiece);
 		}
 		catch (const CompteurRoisException& e) {
@@ -60,15 +61,19 @@ void ModeleJeu::JeuPrincipal::ajouterPiece(const Coordonnee& position, std::stri
 			echiquier_[position.x][position.y].reset();
 			throw;
 		}
-	}
-	else if (typePiece == "Tour") {
-		echiquier_[position.x][position.y] = std::make_unique<Tour>(couleurDonne);
-	}
-	else if (typePiece == "Cavalier") {
-		echiquier_[position.x][position.y] = std::make_unique<Cavalier>(couleurDonne);
+		break;
+
+	case TypePiece::Tour:
+		echiquier_[position.x][position.y] = std::make_unique<Tour>(couleur);
+		break;
+
+	case TypePiece::Cavalier:
+		echiquier_[position.x][position.y] = std::make_unique<Cavalier>(couleur);
+		break;
 	}
 
-	std::cout << "  Ajout de " << typePiece << " " << couleurDonne << " sur (" << position.x << ", " << position.y << ")" << std::endl;
+	std::cout << "  Ajout de " << typeToString(type) << " " << couleurToString(couleur)
+		<< " sur (" << position.x << ", " << position.y << ")" << std::endl;
 }
 
 
@@ -105,7 +110,7 @@ bool ModeleJeu::JeuPrincipal::verifierContraintesEchiquier(const Coordonnee& anc
 	return true;
 }
 
-std::tuple<bool, std::string> ModeleJeu::JeuPrincipal::deplacerPiece(const Coordonnee& depart, std::string couleurJoueur, const Coordonnee& arrivee) {
+std::tuple<bool, std::string> ModeleJeu::JeuPrincipal::deplacerPiece(const Coordonnee& depart, Couleur couleurJoueur, const Coordonnee& arrivee) {
 	if (echiquier_[depart.x][depart.y] == nullptr)
 	{
 		std::cout << "Aucune piece selectionnee" << std::endl;
@@ -129,7 +134,7 @@ std::tuple<bool, std::string> ModeleJeu::JeuPrincipal::deplacerPiece(const Coord
 			{
 				Temporaire pieceTemporaire(depart, arrivee, echiquier_);
 				if (pieceTemporaire.verifierEchec(couleurJoueur)) {
-					return { false, "Ce deplacement place le joueur " + couleurJoueur + " en echec." };
+					return { false, "Ce deplacement place le joueur " + couleurToString(couleurJoueur) + " en echec." };
 				}
 			}
 
@@ -185,7 +190,7 @@ ModeleJeu::Piece* ModeleJeu::Temporaire::getTemporaire()
 	return echiquier_[positionFutur_.x][positionFutur_.y].get();
 }
 
-bool ModeleJeu::Temporaire::verifierEchec(std::string couleurJoueur)
+bool ModeleJeu::Temporaire::verifierEchec(Couleur couleurJoueur)
 {
 	int positionRoiX = -1;
 	int positionRoiY = -1;
@@ -218,7 +223,7 @@ bool ModeleJeu::Temporaire::verifierEchec(std::string couleurJoueur)
 	return false;
 }
 
-ModeleJeu::JeuPrincipal::JeuPrincipal(int placement) {
+ModeleJeu::JeuPrincipal::JeuPrincipal(Placement placement) {
 	for (int i = 0; i < tailleEchiquier; ++i) {
 		for (int j = 0; j < tailleEchiquier; ++j) {
 			echiquier_[i][j] = nullptr;
@@ -242,38 +247,38 @@ ModeleJeu::JeuPrincipal::JeuPrincipal(int placement) {
 
 	try {
 		switch (placement) {
-		case 0: // La Bourdonnais vs. McDonnell, 1834
+		case Placement::LaBourdonaisMcDonnell1834: // La Bourdonnais vs. McDonnell, 1834
 			std::cout << "\n========= La Bourdonnais vs. McDonnell, 1834 =========" << std::endl;
-			ajouterPiece(Coordonnee(0, 1), "Blanc", "Tour");
-			ajouterPiece(Coordonnee(1, 0), "Noir", "Cavalier");
-			ajouterPiece(Coordonnee(3, 0), "Noir", "Roi");
-			ajouterPiece(Coordonnee(3, 2), "Blanc", "Roi");
+			ajouterPiece(Coordonnee(0, 1), Couleur::Blanc, TypePiece::Tour);
+			ajouterPiece(Coordonnee(1, 0), Couleur::Noir, TypePiece::Cavalier);
+			ajouterPiece(Coordonnee(3, 0), Couleur::Noir, TypePiece::Roi);
+			ajouterPiece(Coordonnee(3, 2), Couleur::Blanc, TypePiece::Roi);
 			break;
 
-		case 1: // Karpov vs. Ftacnik, 1988
+		case Placement::KarpovFtacnik1988: // Karpov vs. Ftacnik, 1988
 			std::cout << "\n=========     Karpov vs. Ftacnik, 1988      =========" << std::endl;
-			ajouterPiece(Coordonnee(1, 5), "Blanc", "Tour");
-			ajouterPiece(Coordonnee(2, 1), "Noir", "Cavalier");
-			ajouterPiece(Coordonnee(5, 7), "Noir", "Roi");
-			ajouterPiece(Coordonnee(2, 4), "Blanc", "Roi");
+			ajouterPiece(Coordonnee(1, 5), Couleur::Blanc, TypePiece::Tour);
+			ajouterPiece(Coordonnee(2, 1), Couleur::Noir, TypePiece::Cavalier);
+			ajouterPiece(Coordonnee(5, 7), Couleur::Noir, TypePiece::Roi);
+			ajouterPiece(Coordonnee(2, 4), Couleur::Blanc, TypePiece::Roi);
 			break;
 
-		case 2: // J. Polgar vs. Kasparov, 1996
+		case Placement::PolgarKasparov1996: // J. Polgar vs. Kasparov, 1996
 			std::cout << "\n=========   J. Polgar vs. Kasparov, 1996    =========" << std::endl;
-			ajouterPiece(Coordonnee(0, 4), "Blanc", "Tour");
-			ajouterPiece(Coordonnee(7, 6), "Noir", "Tour");
-			ajouterPiece(Coordonnee(6, 4), "Noir", "Cavalier");
-			ajouterPiece(Coordonnee(5, 5), "Noir", "Roi");
-			ajouterPiece(Coordonnee(4, 7), "Blanc", "Roi");
+			ajouterPiece(Coordonnee(0, 4), Couleur::Blanc, TypePiece::Tour);
+			ajouterPiece(Coordonnee(7, 6), Couleur::Noir, TypePiece::Tour);
+			ajouterPiece(Coordonnee(6, 4), Couleur::Noir, TypePiece::Cavalier);
+			ajouterPiece(Coordonnee(5, 5), Couleur::Noir, TypePiece::Roi);
+			ajouterPiece(Coordonnee(4, 7), Couleur::Blanc, TypePiece::Roi);
 			break;
 
-		case 3: // Alekhine vs. Capablanca, 1927
+		case Placement::AlekhineCablanca1927: // Alekhine vs. Capablanca, 1927
 			std::cout << "\n=========  Alekhine vs. Capablanca, 1927    =========" << std::endl;
-			ajouterPiece(Coordonnee(6, 1), "Blanc", "Tour");
-			ajouterPiece(Coordonnee(1, 0), "Noir", "Tour");
-			ajouterPiece(Coordonnee(1, 3), "Noir", "Cavalier");
-			ajouterPiece(Coordonnee(2, 3), "Noir", "Roi");
-			ajouterPiece(Coordonnee(4, 3), "Blanc", "Roi");
+			ajouterPiece(Coordonnee(6, 1), Couleur::Blanc, TypePiece::Tour);
+			ajouterPiece(Coordonnee(1, 0), Couleur::Noir, TypePiece::Tour);
+			ajouterPiece(Coordonnee(1, 3), Couleur::Noir, TypePiece::Cavalier);
+			ajouterPiece(Coordonnee(2, 3), Couleur::Noir, TypePiece::Roi);
+			ajouterPiece(Coordonnee(4, 3), Couleur::Blanc, TypePiece::Roi);
 			break;
 		}
 	}

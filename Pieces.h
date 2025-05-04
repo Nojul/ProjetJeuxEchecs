@@ -18,6 +18,40 @@ namespace ModeleJeu {
 
 	const int tailleEchiquier = 8;
 
+	enum class Couleur {
+		Blanc,
+		Noir
+	};
+	inline std::string couleurToString(Couleur couleur) {
+		switch (couleur) {
+		case Couleur::Blanc: return "Blanc";
+		case Couleur::Noir: return "Noir";
+		default: return "Inconnu";
+		}
+	}
+
+	enum class TypePiece {
+		Roi,
+		Tour,
+		Cavalier
+	};
+
+	inline std::string typeToString(TypePiece type) {
+		switch (type) {
+		case TypePiece::Roi: return "Roi";
+		case TypePiece::Tour: return "Tour";
+		case TypePiece::Cavalier: return "Cavalier";
+		default: return "Inconnu";
+		}
+	}
+
+	enum class Placement {
+		LaBourdonaisMcDonnell1834,
+		KarpovFtacnik1988,
+		PolgarKasparov1996,
+		AlekhineCablanca1927
+	};
+
 	struct Coordonnee {
 		int x;
 		int y;
@@ -35,19 +69,19 @@ namespace ModeleJeu {
 
 	class Piece {
 	protected:
-		std::string couleur_;
+		Couleur couleur_;
 
 	public:
-		Piece(std::string couleur) : couleur_(std::move(couleur)) {}
+		Piece(Couleur couleur) : couleur_(std::move(couleur)) {}
 		virtual ~Piece() = default;
 
 		virtual bool estMouvementValide(const Coordonnee& depart, const Coordonnee& arrivee) = 0;
-		std::string getCouleur() const;
+		Couleur getCouleur() const;
 	};
 
 	class Roi : public Piece {
 	public:
-		Roi(std::string couleur);
+		Roi(Couleur couleur);
 		~Roi();
 
 		bool estMouvementValide(const Coordonnee& depart, const Coordonnee& arrivee) override;
@@ -64,24 +98,23 @@ namespace ModeleJeu {
 
 	class Tour : public Piece {
 	public:
-		Tour(std::string couleur) : Piece(std::move(couleur)) {}
+		Tour(Couleur couleur) : Piece(std::move(couleur)) {}
 		bool estMouvementValide(const Coordonnee& depart, const Coordonnee& arrivee) override;
 	};
 
 	class Cavalier : public Piece {
 	public:
-		Cavalier(std::string couleur) : Piece(std::move(couleur)) {}
+		Cavalier(Couleur couleur) : Piece(std::move(couleur)) {}
 		bool estMouvementValide(const Coordonnee& depart, const Coordonnee& arrivee) override;
 	};
 
 
 	class JeuPrincipal {
 	public:
-		JeuPrincipal(int placement);
-
+		JeuPrincipal(Placement placement);
 		bool verifierContraintesEchiquier(const Coordonnee& ancienne, const Coordonnee& nouvelle);
-		void ajouterPiece(const Coordonnee& position, std::string couleurDonne, std::string typePiece);
-		std::tuple<bool, std::string> deplacerPiece(const Coordonnee& depart, std::string couleurJoueur, const Coordonnee& arrivee);
+		void ajouterPiece(const Coordonnee& position, Couleur couleur, TypePiece type);
+		std::tuple<bool, std::string> deplacerPiece(const Coordonnee& depart, Couleur couleurJoueur, const Coordonnee& arrivee);
 		Piece* getPiece(const Coordonnee& position);
 		void setCaseSelectionnee(const Coordonnee& position);
 		Coordonnee getCaseSelectionnee() const;
@@ -98,7 +131,7 @@ namespace ModeleJeu {
 		Temporaire(const Coordonnee& position, const Coordonnee& positionFutur, std::unique_ptr<Piece>(&echiquier)[ModeleJeu::tailleEchiquier][ModeleJeu::tailleEchiquier]);
 		~Temporaire();
 		Piece* getTemporaire();
-		bool verifierEchec(std::string couleurJouer);
+		bool verifierEchec(Couleur couleurJouer);
 
 	private:
 		Coordonnee position_;

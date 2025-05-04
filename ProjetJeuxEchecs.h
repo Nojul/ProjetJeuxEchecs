@@ -33,7 +33,7 @@ namespace interfaceGraphique {
 		Ui::ProjetJeuxEchecsClass* ui;
 		QPushButton* boutons[ModeleJeu::tailleEchiquier][ModeleJeu::tailleEchiquier];
 		std::unique_ptr<ModeleJeu::JeuPrincipal> jeu_;
-		std::string joueur = "Blanc";
+		ModeleJeu::Couleur joueur = ModeleJeu::Couleur::Blanc;
 		QLabel* messageErreur_ = nullptr;
 	};
 

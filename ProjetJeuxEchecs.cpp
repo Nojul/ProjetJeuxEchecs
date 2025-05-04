@@ -61,7 +61,7 @@ interfaceGraphique::ProjetJeuxEchecs::ProjetJeuxEchecs(QWidget* parent)
 	}
 
 	try {
-		jeu_ = std::make_unique<ModeleJeu::JeuPrincipal>(1);
+		jeu_ = std::make_unique<ModeleJeu::JeuPrincipal>(ModeleJeu::Placement::AlekhineCablanca1927);
 	}
 	catch (const ModeleJeu::CompteurRoisException& e) {
 		std::cerr << "Error creating game: " << e.what() << std::endl;
@@ -104,8 +104,8 @@ void interfaceGraphique::ProjetJeuxEchecs::clic(ModeleJeu::Coordonnee& coordonne
 		{
 			jeu_.get()->setCaseSelectionnee(ModeleJeu::Coordonnee(-1, -1));
 
-			if (joueur == "Blanc") { joueur = "Noir"; }
-			else { joueur = "Blanc"; }
+			if (joueur == ModeleJeu::Couleur::Blanc) { joueur = ModeleJeu::Couleur::Noir; }
+			else { joueur = ModeleJeu::Couleur::Blanc; }
 		}
 		else {
 			messageErreur_->setText(QString::fromStdString(get<1>(deplacement)));
@@ -132,7 +132,7 @@ void interfaceGraphique::ProjetJeuxEchecs::miseAJour()
 			}
 
 			if (piece) {
-				if (piece->getCouleur() == "Blanc") {
+				if (piece->getCouleur() == ModeleJeu::Couleur::Blanc) {
 					styleBase += " color: white;";
 				}
 				else {
@@ -140,7 +140,7 @@ void interfaceGraphique::ProjetJeuxEchecs::miseAJour()
 				}
 
 				if (dynamic_cast<ModeleJeu::Roi*>(piece)) {
-					if (piece->getCouleur() == "Blanc") {
+					if (piece->getCouleur() == ModeleJeu::Couleur::Blanc) {
 						imagePiece = "♔";
 					}
 					else {
@@ -148,7 +148,7 @@ void interfaceGraphique::ProjetJeuxEchecs::miseAJour()
 					}
 				}
 				else if (dynamic_cast<ModeleJeu::Tour*>(piece)) {
-					if (piece->getCouleur() == "Blanc") {
+					if (piece->getCouleur() == ModeleJeu::Couleur::Blanc) {
 						imagePiece = "♖";
 					}
 					else {
@@ -156,7 +156,7 @@ void interfaceGraphique::ProjetJeuxEchecs::miseAJour()
 					}
 				}
 				else if (dynamic_cast<ModeleJeu::Cavalier*>(piece)) {
-					if (piece->getCouleur() == "Blanc") {
+					if (piece->getCouleur() == ModeleJeu::Couleur::Blanc) {
 						imagePiece = "♘";
 					}
 					else {
