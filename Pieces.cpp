@@ -224,26 +224,15 @@ bool ModeleJeu::Temporaire::verifierEchec(Couleur couleurJoueur)
 }
 
 ModeleJeu::JeuPrincipal::JeuPrincipal(Placement placement) {
+	miseEnPlacement(placement);
+}
+
+void ModeleJeu::JeuPrincipal::miseEnPlacement(Placement placement) {
 	for (int i = 0; i < tailleEchiquier; ++i) {
 		for (int j = 0; j < tailleEchiquier; ++j) {
-			echiquier_[i][j] = nullptr;
+			echiquier_[i][j].reset();
 		}
 	}
-	//QtWidgets.QComboBox.currentIndex()
-	//Return type :
-	//int
-	//un combobox au debut pour choisir quel position faire, le combobox donne un int dependant du choix
-	//https://en.wikipedia.org/wiki/Pawnless_chess_endgame
-	/*    0 1 2 3 4 5 6 7
-		0 . . . . . . . .
-		1 . . . . . . . .
-		2 . . . . . . . .
-		3 . . . . . . . .
-		4 . . . . . . . .
-		5 . . . . . . . .
-		6 . . . . . . . .
-		7 . . . . . . . .
-		  0 1 2 3 4 5 6 7*/
 
 	try {
 		switch (placement) {
@@ -293,4 +282,6 @@ ModeleJeu::JeuPrincipal::JeuPrincipal(Placement placement) {
 		}
 		throw;
 	}
+
+
 }

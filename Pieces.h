@@ -112,6 +112,7 @@ namespace ModeleJeu {
 	class JeuPrincipal {
 	public:
 		JeuPrincipal(Placement placement);
+		void miseEnPlacement(Placement placement);
 		bool verifierContraintesEchiquier(const Coordonnee& ancienne, const Coordonnee& nouvelle);
 		void ajouterPiece(const Coordonnee& position, Couleur couleur, TypePiece type);
 		std::tuple<bool, std::string> deplacerPiece(const Coordonnee& depart, Couleur couleurJoueur, const Coordonnee& arrivee);

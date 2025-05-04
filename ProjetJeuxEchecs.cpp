@@ -7,11 +7,13 @@
 */
 #include "ProjetJeuxEchecs.h"
 #include <iostream>
+#include <QComboBox>
 #include <QLabel>
 #include <qpushbutton.h>
 #include <QString>
 #include <QTimer>
 #include <QVBoxLayout> 
+
 
 interfaceGraphique::ProjetJeuxEchecs::ProjetJeuxEchecs(QWidget* parent)
 	: QMainWindow(parent)
@@ -19,19 +21,35 @@ interfaceGraphique::ProjetJeuxEchecs::ProjetJeuxEchecs(QWidget* parent)
 	, jeu_(nullptr)
 {
 	ui->setupUi(this);
-	const int windowSize = 800;
-	this->setFixedSize(windowSize, windowSize);
+	const int tailleFenetre = 800;
+	const int taillePanneau = 200;
+	this->setFixedSize(tailleFenetre + taillePanneau, tailleFenetre);
+
+	QWidget* centralWidget = new QWidget(this);
+	setCentralWidget(centralWidget);
+
+	QHBoxLayout* mainLayout = new QHBoxLayout(centralWidget);
 
 	QGridLayout* gridLayout = new QGridLayout();
 	gridLayout->setSpacing(0);
 
-	QWidget* centralWidget = new QWidget(this);
-	setCentralWidget(centralWidget);
+	QVBoxLayout* rightLayout = new QVBoxLayout();
+
+	choixPlacement_ = new QComboBox();
+	choixPlacement_->addItem("La Bourdonnais vs. McDonnell, 1834", static_cast<int>(ModeleJeu::Placement::LaBourdonaisMcDonnell1834));
+	choixPlacement_->addItem("Karpov vs. Ftacnik, 1988", static_cast<int>(ModeleJeu::Placement::KarpovFtacnik1988));
+	choixPlacement_->addItem("J. Polgar vs. Kasparov, 1996", static_cast<int>(ModeleJeu::Placement::PolgarKasparov1996));
+	choixPlacement_->addItem("Alekhine vs. Capablanca, 1927", static_cast<int>(ModeleJeu::Placement::AlekhineCablanca1927));
+
+	rightLayout->addWidget(new QLabel("Starting Position:"));
+	rightLayout->addWidget(choixPlacement_);
+	rightLayout->addStretch();
 
 	messageErreur_ = new QLabel(this);
 	messageErreur_->setStyleSheet("color: red; font-weight: bold;");
 	messageErreur_->setAlignment(Qt::AlignBottom | Qt::AlignRight);
 	messageErreur_->setText("");
+	rightLayout->addWidget(messageErreur_);
 
 	for (int i = 0; i < ModeleJeu::tailleEchiquier; ++i) {		//lignes
 		for (int j = 0; j < ModeleJeu::tailleEchiquier; ++j) {	//colonnes
@@ -50,15 +68,16 @@ interfaceGraphique::ProjetJeuxEchecs::ProjetJeuxEchecs(QWidget* parent)
 				this->boutons[i][j]->setStyleSheet("background-color: #b58863; border: none;");
 
 			}
-
 			gridLayout->addWidget(this->boutons[i][j], i, j);
 			connect(this->boutons[i][j], &QPushButton::clicked, this, [this, i, j]() {
-				ModeleJeu::Coordonnee coordonnee(i, j);
-				clic(coordonnee);
-				qDebug() << "Bouton clique :" << i << "," << j;
-				});
+				ModeleJeu::Coordonnee coordonnee(i, j); clic(coordonnee); qDebug() << "Bouton clique :" << i << "," << j; });
 		}
 	}
+	mainLayout->addLayout(gridLayout);
+	mainLayout->addLayout(rightLayout);
+
+	connect(choixPlacement_, QOverload<int>::of(&QComboBox::currentIndexChanged),
+		this, &ProjetJeuxEchecs::onPlacementChanged);
 
 	try {
 		jeu_ = std::make_unique<ModeleJeu::JeuPrincipal>(ModeleJeu::Placement::AlekhineCablanca1927);
@@ -77,11 +96,21 @@ interfaceGraphique::ProjetJeuxEchecs::ProjetJeuxEchecs(QWidget* parent)
 	if (jeu_ != nullptr) {
 		miseAJour();
 	}
+}
 
-	QVBoxLayout* layoutPrincipal = new QVBoxLayout();
-	layoutPrincipal->addLayout(gridLayout);
-	layoutPrincipal->addWidget(messageErreur_, 0, Qt::AlignRight);
-	centralWidget->setLayout(layoutPrincipal);
+void interfaceGraphique::ProjetJeuxEchecs::onPlacementChanged()
+{
+	try {
+		int placementType = choixPlacement_->currentData().toInt();
+		jeu_.get()->miseEnPlacement(static_cast<ModeleJeu::Placement>(placementType));
+		joueur = ModeleJeu::Couleur::Blanc;
+
+		miseAJour();
+		messageErreur_->setText("");
+	}
+	catch (const std::exception& e) {
+		messageErreur_->setText(QString::fromStdString(e.what()));
+	}
 }
 
 interfaceGraphique::ProjetJeuxEchecs::~ProjetJeuxEchecs()

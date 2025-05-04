@@ -8,9 +8,11 @@
 #include "Pieces.h"
 #include "ui_ProjetJeuxEchecs.h"
 #include <memory> 
+#include <QComboBox>
 #include <QLabel>
 #include <qpushbutton.h>
 #include <QtWidgets/QMainWindow>
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class ProjetJeuxEchecsClass; };
@@ -29,12 +31,16 @@ namespace interfaceGraphique {
 		void clic(ModeleJeu::Coordonnee& coordonnee);
 		void miseAJour();
 
+	private slots:
+		void onPlacementChanged();
+
 	private:
 		Ui::ProjetJeuxEchecsClass* ui;
 		QPushButton* boutons[ModeleJeu::tailleEchiquier][ModeleJeu::tailleEchiquier];
 		std::unique_ptr<ModeleJeu::JeuPrincipal> jeu_;
 		ModeleJeu::Couleur joueur = ModeleJeu::Couleur::Blanc;
 		QLabel* messageErreur_ = nullptr;
+		QComboBox* choixPlacement_ = nullptr;
 	};
 
 }
