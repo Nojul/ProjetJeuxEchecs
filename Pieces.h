@@ -9,6 +9,9 @@
 #include "ui_ProjetJeuxEchecs.h"
 #include <memory> 
 #include <QtWidgets/QMainWindow>
+#include <stdexcept>
+#include <string>
+#include <tuple>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class ProjetJeuxEchecsClass; };
@@ -22,6 +25,7 @@ namespace ModeleJeu {
 		Blanc,
 		Noir
 	};
+
 	inline std::string couleurToString(Couleur couleur) {
 		switch (couleur) {
 		case Couleur::Blanc: return "Blanc";
@@ -64,26 +68,33 @@ namespace ModeleJeu {
 		bool estValide() const {
 			return x >= 0 && x < 8 && y >= 0 && y < 8;
 		}
-
 	};
 
 	class Piece {
-	protected:
-		Couleur couleur_;
-
 	public:
-		Piece(Couleur couleur) : couleur_(std::move(couleur)) {}
+		Piece() = default;
 		virtual ~Piece() = default;
-
 		virtual bool estMouvementValide(const Coordonnee& depart, const Coordonnee& arrivee) = 0;
-		Couleur getCouleur() const;
+	};
+
+	struct CaseEchiquier {
+		std::unique_ptr<Piece> piece;
+		Couleur couleur;
+
+		CaseEchiquier() : piece(nullptr), couleur(Couleur::Blanc) {}
+		CaseEchiquier(std::unique_ptr<Piece> p, Couleur c)
+			: piece(std::move(p)), couleur(c) {
+		}
+		CaseEchiquier(const CaseEchiquier&) = delete;
+		CaseEchiquier& operator=(const CaseEchiquier&) = delete;
+		CaseEchiquier(CaseEchiquier&&) = default;
+		CaseEchiquier& operator=(CaseEchiquier&&) = default;
 	};
 
 	class Roi : public Piece {
 	public:
-		Roi(Couleur couleur);
+		Roi();
 		~Roi();
-
 		bool estMouvementValide(const Coordonnee& depart, const Coordonnee& arrivee) override;
 		int getCompteurRoi() const;
 
@@ -91,23 +102,22 @@ namespace ModeleJeu {
 		static int compteurRoi_;
 	};
 
-	class CompteurRoisException : public std::logic_error {
-	public:
-		using std::logic_error::logic_error;
-	};
-
 	class Tour : public Piece {
 	public:
-		Tour(Couleur couleur) : Piece(std::move(couleur)) {}
+		Tour() = default;
 		bool estMouvementValide(const Coordonnee& depart, const Coordonnee& arrivee) override;
 	};
 
 	class Cavalier : public Piece {
 	public:
-		Cavalier(Couleur couleur) : Piece(std::move(couleur)) {}
+		Cavalier() = default;
 		bool estMouvementValide(const Coordonnee& depart, const Coordonnee& arrivee) override;
 	};
 
+	class CompteurRoisException : public std::logic_error {
+	public:
+		using std::logic_error::logic_error;
+	};
 
 	class JeuPrincipal {
 	public:
@@ -117,28 +127,29 @@ namespace ModeleJeu {
 		void ajouterPiece(const Coordonnee& position, Couleur couleur, TypePiece type);
 		std::tuple<bool, std::string> deplacerPiece(const Coordonnee& depart, Couleur couleurJoueur, const Coordonnee& arrivee);
 		Piece* getPiece(const Coordonnee& position);
+		Couleur getCouleurPiece(const Coordonnee& position) const;
 		void setCaseSelectionnee(const Coordonnee& position);
 		Coordonnee getCaseSelectionnee() const;
 		friend class Temporaire;
 
 	private:
 		Coordonnee caseSelectione_;
-		std::unique_ptr<Piece> echiquier_[tailleEchiquier][tailleEchiquier];
+		CaseEchiquier echiquier_[tailleEchiquier][tailleEchiquier];
 	};
 
-	//Classe RAII permettant de bouger une piece temporairement
 	class Temporaire {
 	public:
-		Temporaire(const Coordonnee& position, const Coordonnee& positionFutur, std::unique_ptr<Piece>(&echiquier)[ModeleJeu::tailleEchiquier][ModeleJeu::tailleEchiquier]);
+		Temporaire(const Coordonnee& position, const Coordonnee& positionFutur, CaseEchiquier(&echiquier)[tailleEchiquier][tailleEchiquier]);
 		~Temporaire();
 		Piece* getTemporaire();
-		bool verifierEchec(Couleur couleurJouer);
+		bool verifierEchec(Couleur couleurJoueur);
 
 	private:
 		Coordonnee position_;
 		Coordonnee positionFutur_;
-		std::unique_ptr<Piece>(&echiquier_)[tailleEchiquier][tailleEchiquier];
-		std::unique_ptr<Piece> piece_;
-		std::unique_ptr<Piece> pieceCapturee_;
+		CaseEchiquier(&echiquier_)[tailleEchiquier][tailleEchiquier];
+		CaseEchiquier caseTemporaire_;
+		CaseEchiquier caseCapturee_;
 	};
+
 }

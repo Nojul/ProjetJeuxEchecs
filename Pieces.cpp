@@ -10,23 +10,25 @@
 #include <cmath>
 #include <iostream>
 
-ModeleJeu::Couleur ModeleJeu::Piece::getCouleur() const { return couleur_; }
+ModeleJeu::Roi::Roi() {
+	if (compteurRoi_ < 2) {
+		compteurRoi_++;
+	}
+	else {
+		throw CompteurRoisException(" Plus de deux instances de rois ");
+	}
+}
+
+int ModeleJeu::Roi::getCompteurRoi() const
+{
+	return compteurRoi_;
+}
 
 ModeleJeu::Roi::~Roi() {
 	compteurRoi_--;
 }
 
-ModeleJeu::Roi::Roi(Couleur couleur) : Piece(couleur) {
-	if (compteurRoi_ < 2) {
-		compteurRoi_++;
-	}
-	else {
-		throw CompteurRoisException(" Plus de deux instancess de rois ");
-	}
-}
-
 int ModeleJeu::Roi::compteurRoi_ = 0;
-int ModeleJeu::Roi::getCompteurRoi() const { return compteurRoi_; }
 
 bool ModeleJeu::Roi::estMouvementValide(const Coordonnee& depart, const Coordonnee& arrivee) {
 	int deltaX = abs(depart.x - arrivee.x);
@@ -49,43 +51,43 @@ void ModeleJeu::JeuPrincipal::ajouterPiece(const Coordonnee& position, Couleur c
 	if (position.x < 0 || position.x >= tailleEchiquier || position.y < 0 || position.y >= tailleEchiquier) {
 		throw std::out_of_range("Position hors des limites du plateau");
 	}
-
+	std::unique_ptr<Piece> nouvellePiece;
 	switch (type) {
 	case TypePiece::Roi:
 		try {
-			auto nouvellePiece = std::make_unique<Roi>(couleur);
-			echiquier_[position.x][position.y] = std::move(nouvellePiece);
+			nouvellePiece = std::make_unique<Roi>();
 		}
 		catch (const CompteurRoisException& e) {
 			std::cerr << "Erreur roi : " << e.what() << std::endl;
-			echiquier_[position.x][position.y].reset();
 			throw;
 		}
 		break;
 
 	case TypePiece::Tour:
-		echiquier_[position.x][position.y] = std::make_unique<Tour>(couleur);
+		nouvellePiece = std::make_unique<Tour>();
 		break;
 
 	case TypePiece::Cavalier:
-		echiquier_[position.x][position.y] = std::make_unique<Cavalier>(couleur);
+		nouvellePiece = std::make_unique<Cavalier>();
 		break;
 	}
+
+	echiquier_[position.x][position.y] = CaseEchiquier(std::move(nouvellePiece), couleur);
 
 	std::cout << "  Ajout de " << typeToString(type) << " " << couleurToString(couleur)
 		<< " sur (" << position.x << ", " << position.y << ")" << std::endl;
 }
 
-
 bool ModeleJeu::JeuPrincipal::verifierContraintesEchiquier(const Coordonnee& ancienne, const Coordonnee& nouvelle) {
-	Piece* piece = echiquier_[ancienne.x][ancienne.y].get();
-	if (!piece) return false;
+	const auto& caseDepart = echiquier_[ancienne.x][ancienne.y];
+	if (!caseDepart.piece) return false;
 
-	if (echiquier_[nouvelle.x][nouvelle.y] && echiquier_[nouvelle.x][nouvelle.y]->getCouleur() == piece->getCouleur()) {
+	const auto& caseArrivee = echiquier_[nouvelle.x][nouvelle.y];
+	if (caseArrivee.piece && caseArrivee.couleur == caseDepart.couleur) {
 		return false;
 	}
 
-	if (dynamic_cast<Tour*>(piece)) {
+	if (dynamic_cast<Tour*>(caseDepart.piece.get())) {
 		int startX = std::min(ancienne.x, nouvelle.x);
 		int endX = std::max(ancienne.x, nouvelle.x);
 		int startY = std::min(ancienne.y, nouvelle.y);
@@ -93,14 +95,14 @@ bool ModeleJeu::JeuPrincipal::verifierContraintesEchiquier(const Coordonnee& anc
 
 		if (ancienne.x == nouvelle.x) {
 			for (int i = startY + 1; i < endY; ++i) {
-				if (echiquier_[ancienne.x][i] != nullptr) {
+				if (echiquier_[ancienne.x][i].piece != nullptr) {
 					return false;
 				}
 			}
 		}
 		else if (ancienne.y == nouvelle.y) {
 			for (int i = startX + 1; i < endX; ++i) {
-				if (echiquier_[i][ancienne.y] != nullptr) {
+				if (echiquier_[i][ancienne.y].piece != nullptr) {
 					return false;
 				}
 			}
@@ -110,22 +112,18 @@ bool ModeleJeu::JeuPrincipal::verifierContraintesEchiquier(const Coordonnee& anc
 }
 
 std::tuple<bool, std::string> ModeleJeu::JeuPrincipal::deplacerPiece(const Coordonnee& depart, Couleur couleurJoueur, const Coordonnee& arrivee) {
-	if (echiquier_[depart.x][depart.y] == nullptr)
-	{
+	const auto& caseDepart = echiquier_[depart.x][depart.y];
+	if (!caseDepart.piece) {
 		std::cout << "Aucune piece selectionnee" << std::endl;
-		return{ false, "Aucune piece selectionnee" };
+		return { false, "Aucune piece selectionnee" };
 	}
-	if (echiquier_[depart.x][depart.y]->getCouleur() != couleurJoueur)
-	{
+	if (caseDepart.couleur != couleurJoueur) {
 		std::cout << "La piece a deplacer ne correspond pas avec la couleur du joueur." << std::endl;
-		return{ false, "La piece a deplacer ne correspond pas avec la couleur du joueur." };
+		return { false, "La piece a deplacer ne correspond pas avec la couleur du joueur." };
 	}
 
 	try {
-		Piece* piece = echiquier_[depart.x][depart.y].get();
-
-		if (piece->estMouvementValide(depart, arrivee)) {
-
+		if (caseDepart.piece->estMouvementValide(depart, arrivee)) {
 			if (!verifierContraintesEchiquier(depart, arrivee)) {
 				return { false, "Deplacement bloque par d'autres pieces" };
 			}
@@ -137,19 +135,19 @@ std::tuple<bool, std::string> ModeleJeu::JeuPrincipal::deplacerPiece(const Coord
 				}
 			}
 
-			if (echiquier_[arrivee.x][arrivee.y] != nullptr) {
+			if (echiquier_[arrivee.x][arrivee.y].piece) {
 				std::cout << "Piece eliminee a la position (" << arrivee.x << "," << arrivee.y << ")" << std::endl;
-				echiquier_[arrivee.x][arrivee.y] = nullptr;
 			}
+			echiquier_[arrivee.x][arrivee.y] = CaseEchiquier(std::move(echiquier_[depart.x][depart.y].piece), echiquier_[depart.x][depart.y].couleur);
+			echiquier_[depart.x][depart.y] = CaseEchiquier();
 
-			echiquier_[arrivee.x][arrivee.y] = std::move(echiquier_[depart.x][depart.y]);
-			echiquier_[depart.x][depart.y] = nullptr;
-			std::cout << "Deplacement effectue de (" << depart.x << "," << depart.y << ") a (" << arrivee.x << "," << arrivee.y << ")" << std::endl;
-			return{ true,"" };
+			std::cout << "Deplacement effectue de (" << depart.x << "," << depart.y
+				<< ") a (" << arrivee.x << "," << arrivee.y << ")" << std::endl;
+			return { true, "" };
 		}
 		else {
 			std::cerr << "Deplacement invalide pour cette piece" << std::endl;
-			return{ false , "Deplacement invalide pour cette piece" };
+			return { false, "Deplacement invalide pour cette piece" };
 		}
 	}
 	catch (const std::exception& e) {
@@ -158,7 +156,11 @@ std::tuple<bool, std::string> ModeleJeu::JeuPrincipal::deplacerPiece(const Coord
 }
 
 ModeleJeu::Piece* ModeleJeu::JeuPrincipal::getPiece(const Coordonnee& position) {
-	return echiquier_[position.x][position.y].get();
+	return echiquier_[position.x][position.y].piece.get();
+}
+
+ModeleJeu::Couleur ModeleJeu::JeuPrincipal::getCouleurPiece(const Coordonnee& position) const {
+	return echiquier_[position.x][position.y].couleur;
 }
 
 void ModeleJeu::JeuPrincipal::setCaseSelectionnee(const Coordonnee& position) {
@@ -169,24 +171,22 @@ ModeleJeu::Coordonnee ModeleJeu::JeuPrincipal::getCaseSelectionnee() const {
 	return caseSelectione_;
 }
 
-ModeleJeu::Temporaire::Temporaire(const Coordonnee& position, const Coordonnee& positionFutur, std::unique_ptr<Piece>(&echiquier)[ModeleJeu::tailleEchiquier][ModeleJeu::tailleEchiquier])
+ModeleJeu::Temporaire::Temporaire(const Coordonnee& position, const Coordonnee& positionFutur, CaseEchiquier(&echiquier)[ModeleJeu::tailleEchiquier][ModeleJeu::tailleEchiquier])
 	: position_(position), positionFutur_(positionFutur), echiquier_(echiquier) {
-	piece_ = std::move(echiquier_[position.x][position.y]);
-	pieceCapturee_ = std::move(echiquier_[positionFutur.x][positionFutur.y]);
-	echiquier_[positionFutur.x][positionFutur.y] = std::move(piece_);
+	caseTemporaire_ = CaseEchiquier(std::move(echiquier_[position.x][position.y].piece), echiquier_[position.x][position.y].couleur);
+	caseCapturee_ = CaseEchiquier(std::move(echiquier_[positionFutur.x][positionFutur.y].piece), echiquier_[positionFutur.x][positionFutur.y].couleur);
+	echiquier_[positionFutur.x][positionFutur.y] = CaseEchiquier(std::move(caseTemporaire_.piece), caseTemporaire_.couleur);
 }
 
-ModeleJeu::Temporaire::~Temporaire()
-{
-	piece_ = std::move(echiquier_[positionFutur_.x][positionFutur_.y]);
-	echiquier_[positionFutur_.x][positionFutur_.y] = std::move(pieceCapturee_);
-	echiquier_[position_.x][position_.y] = std::move(piece_);
+ModeleJeu::Temporaire::~Temporaire() {
+	caseTemporaire_ = CaseEchiquier(std::move(echiquier_[positionFutur_.x][positionFutur_.y].piece), echiquier_[positionFutur_.x][positionFutur_.y].couleur);
+	echiquier_[positionFutur_.x][positionFutur_.y] = CaseEchiquier(std::move(caseCapturee_.piece), caseCapturee_.couleur);
+	echiquier_[position_.x][position_.y] = CaseEchiquier(std::move(caseTemporaire_.piece), caseTemporaire_.couleur);
 }
-
 
 ModeleJeu::Piece* ModeleJeu::Temporaire::getTemporaire()
 {
-	return echiquier_[positionFutur_.x][positionFutur_.y].get();
+	return echiquier_[positionFutur_.x][positionFutur_.y].piece.get();
 }
 
 bool ModeleJeu::Temporaire::verifierEchec(Couleur couleurJoueur)
@@ -197,8 +197,8 @@ bool ModeleJeu::Temporaire::verifierEchec(Couleur couleurJoueur)
 	{
 		for (int j = 0; j < ModeleJeu::tailleEchiquier; j++)
 		{
-			Piece* piece = echiquier_[i][j].get();
-			if (piece and dynamic_cast<ModeleJeu::Roi*>(piece) and piece->getCouleur() == couleurJoueur)
+			CaseEchiquier& caseActuelle = echiquier_[i][j];
+			if (caseActuelle.piece && dynamic_cast<ModeleJeu::Roi*>(caseActuelle.piece.get()) && caseActuelle.couleur == couleurJoueur)
 			{
 				positionRoiX = i;
 				positionRoiY = j;
@@ -214,8 +214,8 @@ bool ModeleJeu::Temporaire::verifierEchec(Couleur couleurJoueur)
 	{
 		for (int j = 0; j < tailleEchiquier; j++)
 		{
-			Piece* pieceAdverse = echiquier_[i][j].get();
-			if (pieceAdverse && pieceAdverse->estMouvementValide(Coordonnee(i, j), Coordonnee(positionRoiX, positionRoiY)) && pieceAdverse->getCouleur() != couleurJoueur)
+			CaseEchiquier& caseActuelle = echiquier_[i][j];
+			if (caseActuelle.piece && caseActuelle.piece.get()->estMouvementValide(Coordonnee(i, j), Coordonnee(positionRoiX, positionRoiY)) && caseActuelle.couleur != couleurJoueur)
 				return true;
 		}
 	}
@@ -230,7 +230,7 @@ void ModeleJeu::JeuPrincipal::miseEnPlacement(Placement placement) {
 	caseSelectione_ = Coordonnee(-1, -1);
 	for (int i = 0; i < tailleEchiquier; ++i) {
 		for (int j = 0; j < tailleEchiquier; ++j) {
-			echiquier_[i][j].reset();
+			echiquier_[i][j].piece.reset();
 		}
 	}
 
@@ -275,8 +275,8 @@ void ModeleJeu::JeuPrincipal::miseEnPlacement(Placement placement) {
 		std::cerr << "Erreur : " << e.what() << std::endl;
 		for (int i = 0; i < tailleEchiquier; ++i) {
 			for (int j = 0; j < tailleEchiquier; ++j) {
-				if (echiquier_[i][j]) {
-					echiquier_[i][j].reset();
+				if (echiquier_[i][j].piece) {
+					echiquier_[i][j].piece.reset();
 				}
 			}
 		}

@@ -145,7 +145,7 @@ interfaceGraphique::ProjetJeuxEchecs::~ProjetJeuxEchecs()
 }
 
 void interfaceGraphique::ProjetJeuxEchecs::clic(ModeleJeu::Coordonnee& coordonnee) {
-	if (jeu_->getPiece(coordonnee) != nullptr and jeu_->getPiece(coordonnee)->getCouleur() == joueur) {
+	if (jeu_->getPiece(coordonnee) != nullptr and jeu_.get()->getCouleurPiece(coordonnee) == joueur) {
 		jeu_.get()->setCaseSelectionnee(coordonnee);
 	}
 	else if (!jeu_.get()->getCaseSelectionnee().estValide()) { 	//Si aucune piece selectionnee
@@ -177,6 +177,7 @@ void interfaceGraphique::ProjetJeuxEchecs::miseAJour()
 	for (int i = 0; i < ModeleJeu::tailleEchiquier; ++i) {
 		for (int j = 0; j < ModeleJeu::tailleEchiquier; ++j) {
 			ModeleJeu::Piece* piece = jeu_->getPiece(ModeleJeu::Coordonnee(i, j));
+			ModeleJeu::Couleur couleur = jeu_->getCouleurPiece(ModeleJeu::Coordonnee(i, j));
 			QString imagePiece = "";
 			QString styleBase;
 
@@ -188,7 +189,7 @@ void interfaceGraphique::ProjetJeuxEchecs::miseAJour()
 			}
 
 			if (piece) {
-				if (piece->getCouleur() == ModeleJeu::Couleur::Blanc) {
+				if (couleur == ModeleJeu::Couleur::Blanc) {
 					styleBase += " color: white;";
 				}
 				else {
@@ -196,7 +197,7 @@ void interfaceGraphique::ProjetJeuxEchecs::miseAJour()
 				}
 
 				if (dynamic_cast<ModeleJeu::Roi*>(piece)) {
-					if (piece->getCouleur() == ModeleJeu::Couleur::Blanc) {
+					if (couleur == ModeleJeu::Couleur::Blanc) {
 						imagePiece = "♔";
 					}
 					else {
@@ -204,7 +205,7 @@ void interfaceGraphique::ProjetJeuxEchecs::miseAJour()
 					}
 				}
 				else if (dynamic_cast<ModeleJeu::Tour*>(piece)) {
-					if (piece->getCouleur() == ModeleJeu::Couleur::Blanc) {
+					if (couleur == ModeleJeu::Couleur::Blanc) {
 						imagePiece = "♖";
 					}
 					else {
@@ -212,7 +213,7 @@ void interfaceGraphique::ProjetJeuxEchecs::miseAJour()
 					}
 				}
 				else if (dynamic_cast<ModeleJeu::Cavalier*>(piece)) {
-					if (piece->getCouleur() == ModeleJeu::Couleur::Blanc) {
+					if (couleur == ModeleJeu::Couleur::Blanc) {
 						imagePiece = "♘";
 					}
 					else {
