@@ -26,7 +26,7 @@ namespace interfaceGraphique {
 		~ProjetJeuxEchecs();
 		ProjetJeuxEchecs(const ProjetJeuxEchecs&) = delete;
 		ProjetJeuxEchecs& operator=(const ProjetJeuxEchecs&) = delete;
-		void clic(int x, int y);
+		void clic(ModeleJeu::Coordonnee& coordonnee);
 		void miseAJour();
 
 	private:

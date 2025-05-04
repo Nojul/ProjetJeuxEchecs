@@ -18,29 +18,40 @@ namespace ModeleJeu {
 
 	const int tailleEchiquier = 8;
 
+	struct Coordonnee {
+		int x;
+		int y;
+
+		Coordonnee() : x(-1), y(-1) {}
+		Coordonnee(int x, int y) : x(x), y(y) {}
+		bool operator==(const Coordonnee& autre) const {
+			return x == autre.x && y == autre.y;
+		}
+		bool estValide() const {
+			return x >= 0 && x < 8 && y >= 0 && y < 8;
+		}
+
+	};
+
 	class Piece {
 	protected:
-		int posX_;
-		int posY_;
 		std::string couleur_;
 
 	public:
-		Piece(int x, int y, std::string couleur) : posX_(x), posY_(y), couleur_(couleur) {}
+		Piece(std::string couleur) : couleur_(std::move(couleur)) {}
 		virtual ~Piece() = default;
-		virtual bool estMouvementValide(int x, int y) = 0;
-		std::string getCouleur();
-		int getPositionX() const;
-		int getPositionY() const;
-		void setPosition(int x, int y);
 
+		virtual bool estMouvementValide(const Coordonnee& depart, const Coordonnee& arrivee) = 0;
+		std::string getCouleur() const;
 	};
 
 	class Roi : public Piece {
 	public:
-		Roi(int posXDebut, int posYDebut, std::string couleur);
+		Roi(std::string couleur);
 		~Roi();
-		bool estMouvementValide(int x, int y) override;
-		int getCompteurRoi();
+
+		bool estMouvementValide(const Coordonnee& depart, const Coordonnee& arrivee) override;
+		int getCompteurRoi() const;
 
 	private:
 		static int compteurRoi_;
@@ -48,51 +59,50 @@ namespace ModeleJeu {
 
 	class CompteurRoisException : public std::logic_error {
 	public:
-		using logic_error::logic_error;
+		using std::logic_error::logic_error;
 	};
 
 	class Tour : public Piece {
 	public:
-		Tour(int posXDebut, int posYDebut, std::string couleur) : Piece(posXDebut, posYDebut, couleur) {}
-		bool estMouvementValide(int x, int y) override;
+		Tour(std::string couleur) : Piece(std::move(couleur)) {}
+		bool estMouvementValide(const Coordonnee& depart, const Coordonnee& arrivee) override;
 	};
 
 	class Cavalier : public Piece {
 	public:
-		Cavalier(int posXDebut, int posYDebut, std::string couleur) : Piece(posXDebut, posYDebut, couleur) {}
-		bool estMouvementValide(int x, int y) override;
+		Cavalier(std::string couleur) : Piece(std::move(couleur)) {}
+		bool estMouvementValide(const Coordonnee& depart, const Coordonnee& arrivee) override;
 	};
+
 
 	class JeuPrincipal {
 	public:
 		JeuPrincipal(int placement);
 
-		bool verifierContraintesEchiquier(int posX, int posY, int nouvPosX, int nouvPosY);
-		void ajouterPiece(int posX, int posY, std::string couleurDonne, std::string typePiece);
-		std::tuple<bool, std::string> deplacerPiece(int posX, int posY, std::string couleurJoueur, int nouvPosX, int nouvPosY);
-		Piece* getPiece(int x, int y);
-		void setPieceSelectionnee(Piece* piece);
-		Piece* getPieceSelectionnee() const;
+		bool verifierContraintesEchiquier(const Coordonnee& ancienne, const Coordonnee& nouvelle);
+		void ajouterPiece(const Coordonnee& position, std::string couleurDonne, std::string typePiece);
+		std::tuple<bool, std::string> deplacerPiece(const Coordonnee& depart, std::string couleurJoueur, const Coordonnee& arrivee);
+		Piece* getPiece(const Coordonnee& position);
+		void setCaseSelectionnee(const Coordonnee& position);
+		Coordonnee getCaseSelectionnee() const;
 		friend class Temporaire;
 
 	private:
-		Piece* pieceSelectionnee_ = nullptr;
+		Coordonnee caseSelectione_;
 		std::unique_ptr<Piece> echiquier_[tailleEchiquier][tailleEchiquier];
 	};
 
 	//Classe RAII permettant de bouger une piece temporairement
 	class Temporaire {
 	public:
-		Temporaire(int positionX, int positionY, int nouvPositionX, int nouvPositionY, std::unique_ptr<Piece>(&echiquier)[ModeleJeu::tailleEchiquier][ModeleJeu::tailleEchiquier]);
+		Temporaire(const Coordonnee& position, const Coordonnee& positionFutur, std::unique_ptr<Piece>(&echiquier)[ModeleJeu::tailleEchiquier][ModeleJeu::tailleEchiquier]);
 		~Temporaire();
 		Piece* getTemporaire();
 		bool verifierEchec(std::string couleurJouer);
 
 	private:
-		int positionX_;
-		int positionY_;
-		int nouvPositionX_;
-		int nouvPositionY_;
+		Coordonnee position_;
+		Coordonnee positionFutur_;
 		std::unique_ptr<Piece>(&echiquier_)[tailleEchiquier][tailleEchiquier];
 		std::unique_ptr<Piece> piece_;
 		std::unique_ptr<Piece> pieceCapturee_;

@@ -53,7 +53,8 @@ interfaceGraphique::ProjetJeuxEchecs::ProjetJeuxEchecs(QWidget* parent)
 
 			gridLayout->addWidget(this->boutons[i][j], i, j);
 			connect(this->boutons[i][j], &QPushButton::clicked, this, [this, i, j]() {
-				clic(i, j);
+				ModeleJeu::Coordonnee coordonnee(i, j);
+				clic(coordonnee);
 				qDebug() << "Bouton clique :" << i << "," << j;
 				});
 		}
@@ -88,24 +89,20 @@ interfaceGraphique::ProjetJeuxEchecs::~ProjetJeuxEchecs()
 	delete ui;
 }
 
-void interfaceGraphique::ProjetJeuxEchecs::clic(int x, int y)
-{
-	if (jeu_->getPiece(x, y) != nullptr and jeu_->getPiece(x, y)->getCouleur() == joueur) {
-		jeu_.get()->setPieceSelectionnee(jeu_->getPiece(x, y));
+void interfaceGraphique::ProjetJeuxEchecs::clic(ModeleJeu::Coordonnee& coordonnee) {
+	if (jeu_->getPiece(coordonnee) != nullptr and jeu_->getPiece(coordonnee)->getCouleur() == joueur) {
+		jeu_.get()->setCaseSelectionnee(coordonnee);
 	}
-
-	else if (jeu_.get()->getPieceSelectionnee() == nullptr) { 	//Si aucune piece selectionnee
+	else if (!jeu_.get()->getCaseSelectionnee().estValide()) { 	//Si aucune piece selectionnee
 		messageErreur_->setText("Aucune piece selectionnee");
 		messageErreur_->show();
 		QTimer::singleShot(2000, messageErreur_, &QLabel::hide);
 	}
 	else { // verifier deplacement de la piece selectione
-		int xSelectionne = jeu_.get()->getPieceSelectionnee()->getPositionX();
-		int ySelectionne = jeu_.get()->getPieceSelectionnee()->getPositionY();
-		std::tuple<bool, std::string> deplacement = jeu_->deplacerPiece(xSelectionne, ySelectionne, joueur, x, y);
+		std::tuple<bool, std::string> deplacement = jeu_->deplacerPiece(jeu_.get()->getCaseSelectionnee(), joueur, coordonnee);
 		if (get<0>(deplacement))
 		{
-			jeu_.get()->setPieceSelectionnee(nullptr);
+			jeu_.get()->setCaseSelectionnee(ModeleJeu::Coordonnee(-1, -1));
 
 			if (joueur == "Blanc") { joueur = "Noir"; }
 			else { joueur = "Blanc"; }
@@ -123,7 +120,7 @@ void interfaceGraphique::ProjetJeuxEchecs::miseAJour()
 {
 	for (int i = 0; i < ModeleJeu::tailleEchiquier; ++i) {
 		for (int j = 0; j < ModeleJeu::tailleEchiquier; ++j) {
-			ModeleJeu::Piece* piece = jeu_->getPiece(i, j);
+			ModeleJeu::Piece* piece = jeu_->getPiece(ModeleJeu::Coordonnee(i, j));
 			QString imagePiece = "";
 			QString styleBase;
 
@@ -168,8 +165,7 @@ void interfaceGraphique::ProjetJeuxEchecs::miseAJour()
 				}
 			}
 
-			ModeleJeu::Piece* selected = jeu_->getPieceSelectionnee();
-			if (selected && selected->getPositionX() == i && selected->getPositionY() == j) {
+			if (jeu_.get()->getCaseSelectionnee() == ModeleJeu::Coordonnee(i, j)) {
 				styleBase += " border: 4px solid green;";
 			}
 			else {
