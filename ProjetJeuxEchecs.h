@@ -41,6 +41,7 @@ namespace interfaceGraphique {
 		ModeleJeu::Couleur joueur = ModeleJeu::Couleur::Blanc;
 		QLabel* messageErreur_ = nullptr;
 		QComboBox* choixPlacement_ = nullptr;
+		QLabel* tourLabel_ = nullptr;
 	};
 
 }

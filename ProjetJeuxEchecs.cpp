@@ -12,8 +12,7 @@
 #include <qpushbutton.h>
 #include <QString>
 #include <QTimer>
-#include <QVBoxLayout> 
-
+#include <QVBoxLayout>
 
 interfaceGraphique::ProjetJeuxEchecs::ProjetJeuxEchecs(QWidget* parent)
 	: QMainWindow(parent)
@@ -23,6 +22,9 @@ interfaceGraphique::ProjetJeuxEchecs::ProjetJeuxEchecs(QWidget* parent)
 	ui->setupUi(this);
 	const int tailleFenetre = 800;
 	const int taillePanneau = 200;
+	const int largeurErreur = 200;
+	const int hauteurErreur = 50;
+
 	this->setFixedSize(tailleFenetre + taillePanneau, tailleFenetre);
 
 	QWidget* centralWidget = new QWidget(this);
@@ -40,16 +42,42 @@ interfaceGraphique::ProjetJeuxEchecs::ProjetJeuxEchecs(QWidget* parent)
 	choixPlacement_->addItem("Karpov vs. Ftacnik, 1988", static_cast<int>(ModeleJeu::Placement::KarpovFtacnik1988));
 	choixPlacement_->addItem("J. Polgar vs. Kasparov, 1996", static_cast<int>(ModeleJeu::Placement::PolgarKasparov1996));
 	choixPlacement_->addItem("Alekhine vs. Capablanca, 1927", static_cast<int>(ModeleJeu::Placement::AlekhineCablanca1927));
-
-	rightLayout->addWidget(new QLabel("Starting Position:"));
+	rightLayout->addWidget(new QLabel("Choix de placement:"));
 	rightLayout->addWidget(choixPlacement_);
+	rightLayout->addSpacing(10);
+
+	//Pour savoir le tour de joueur
+	tourLabel_ = new QLabel(this);
+	tourLabel_->setFixedSize(largeurErreur, hauteurErreur);
+	tourLabel_->setAlignment(Qt::AlignCenter);
+	tourLabel_->setWordWrap(true);
+
+	QHBoxLayout* tourContainer = new QHBoxLayout();
+	rightLayout->addWidget(new QLabel("Tour:"));
+	tourContainer->addWidget(tourLabel_);
+	rightLayout->addLayout(tourContainer);
 	rightLayout->addStretch();
 
+	//Pour le message d'erreur
 	messageErreur_ = new QLabel(this);
-	messageErreur_->setStyleSheet("color: red; font-weight: bold;");
-	messageErreur_->setAlignment(Qt::AlignBottom | Qt::AlignRight);
-	messageErreur_->setText("");
-	rightLayout->addWidget(messageErreur_);
+	messageErreur_->setFixedSize(largeurErreur, hauteurErreur);
+	messageErreur_->setAlignment(Qt::AlignCenter);
+	messageErreur_->setWordWrap(true);
+	messageErreur_->setStyleSheet(
+		"QLabel { "
+		"color: white; "
+		"background-color: #d9534f; "
+		"padding: 6px; "
+		"border-radius: 8px; "
+		"font-weight: bold; "
+		"font-size: 12px;"
+		"}"
+	);
+	messageErreur_->setVisible(false);
+	QHBoxLayout* errorContainer = new QHBoxLayout();
+	errorContainer->addWidget(messageErreur_);
+	rightLayout->addLayout(errorContainer);
+
 
 	for (int i = 0; i < ModeleJeu::tailleEchiquier; ++i) {		//lignes
 		for (int j = 0; j < ModeleJeu::tailleEchiquier; ++j) {	//colonnes
@@ -98,13 +126,11 @@ interfaceGraphique::ProjetJeuxEchecs::ProjetJeuxEchecs(QWidget* parent)
 	}
 }
 
-void interfaceGraphique::ProjetJeuxEchecs::onPlacementChanged()
-{
+void interfaceGraphique::ProjetJeuxEchecs::onPlacementChanged() {
 	try {
 		int placementType = choixPlacement_->currentData().toInt();
 		jeu_.get()->miseEnPlacement(static_cast<ModeleJeu::Placement>(placementType));
 		joueur = ModeleJeu::Couleur::Blanc;
-
 		miseAJour();
 		messageErreur_->setText("");
 	}
@@ -147,6 +173,7 @@ void interfaceGraphique::ProjetJeuxEchecs::clic(ModeleJeu::Coordonnee& coordonne
 
 void interfaceGraphique::ProjetJeuxEchecs::miseAJour()
 {
+
 	for (int i = 0; i < ModeleJeu::tailleEchiquier; ++i) {
 		for (int j = 0; j < ModeleJeu::tailleEchiquier; ++j) {
 			ModeleJeu::Piece* piece = jeu_->getPiece(ModeleJeu::Coordonnee(i, j));
@@ -205,7 +232,34 @@ void interfaceGraphique::ProjetJeuxEchecs::miseAJour()
 			boutons[i][j]->setStyleSheet(styleBase);
 		}
 	}
-
+	if (jeu_ != nullptr) {
+		if (joueur == ModeleJeu::Couleur::Blanc) {
+			tourLabel_->setText("Blanc");
+			tourLabel_->setStyleSheet(
+				"QLabel { "
+				"color: black; "
+				"background-color: white; "
+				"padding: 6px; "
+				"border-radius: 8px; "
+				"font-weight: bold; "
+				"font-size: 12px; "
+				"}"
+			);
+		}
+		else {
+			tourLabel_->setText("Noir");
+			tourLabel_->setStyleSheet(
+				"QLabel { "
+				"color: white; "
+				"background-color: #343a40; "
+				"padding: 6px; "
+				"border-radius: 8px; "
+				"font-weight: bold; "
+				"font-size: 12px; "
+				"}"
+			);
+		}
+	}
 
 }
 

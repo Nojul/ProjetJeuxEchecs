@@ -106,7 +106,6 @@ bool ModeleJeu::JeuPrincipal::verifierContraintesEchiquier(const Coordonnee& anc
 			}
 		}
 	}
-
 	return true;
 }
 
@@ -228,6 +227,7 @@ ModeleJeu::JeuPrincipal::JeuPrincipal(Placement placement) {
 }
 
 void ModeleJeu::JeuPrincipal::miseEnPlacement(Placement placement) {
+	caseSelectione_ = Coordonnee(-1, -1);
 	for (int i = 0; i < tailleEchiquier; ++i) {
 		for (int j = 0; j < tailleEchiquier; ++j) {
 			echiquier_[i][j].reset();
