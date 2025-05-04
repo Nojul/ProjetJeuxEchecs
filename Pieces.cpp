@@ -10,25 +10,9 @@
 #include <cmath>
 #include <iostream>
 
-ModeleJeu::Roi::Roi() {
-	if (compteurRoi_ < 2) {
-		compteurRoi_++;
-	}
-	else {
-		throw CompteurRoisException(" Plus de deux instances de rois ");
-	}
-}
+int ModeleJeu::JeuPrincipal::compteurRoi_ = 0;
 
-int ModeleJeu::Roi::getCompteurRoi() const
-{
-	return compteurRoi_;
-}
-
-ModeleJeu::Roi::~Roi() {
-	compteurRoi_--;
-}
-
-int ModeleJeu::Roi::compteurRoi_ = 0;
+ModeleJeu::Roi::~Roi() { JeuPrincipal::compteurRoi_--; }
 
 bool ModeleJeu::Roi::estMouvementValide(const Coordonnee& depart, const Coordonnee& arrivee) {
 	int deltaX = abs(depart.x - arrivee.x);
@@ -54,6 +38,10 @@ void ModeleJeu::JeuPrincipal::ajouterPiece(const Coordonnee& position, Couleur c
 	std::unique_ptr<Piece> nouvellePiece;
 	switch (type) {
 	case TypePiece::Roi:
+		if (compteurRoi_ >= 2) {
+			throw CompteurRoisException("Plus de deux instances de rois");
+		}
+		compteurRoi_++;
 		try {
 			nouvellePiece = std::make_unique<Roi>();
 		}

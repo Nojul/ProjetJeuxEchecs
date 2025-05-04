@@ -93,13 +93,9 @@ namespace ModeleJeu {
 
 	class Roi : public Piece {
 	public:
-		Roi();
+		Roi() = default;
 		~Roi();
 		bool estMouvementValide(const Coordonnee& depart, const Coordonnee& arrivee) override;
-		int getCompteurRoi() const;
-
-	private:
-		static int compteurRoi_;
 	};
 
 	class Tour : public Piece {
@@ -130,10 +126,13 @@ namespace ModeleJeu {
 		Couleur getCouleurPiece(const Coordonnee& position) const;
 		void setCaseSelectionnee(const Coordonnee& position);
 		Coordonnee getCaseSelectionnee() const;
+		int getCompteurRoi() const { return compteurRoi_; }
 		friend class Temporaire;
+		friend class Roi;
 
 	private:
 		Coordonnee caseSelectione_;
+		static int compteurRoi_;
 		CaseEchiquier echiquier_[tailleEchiquier][tailleEchiquier];
 	};
 
