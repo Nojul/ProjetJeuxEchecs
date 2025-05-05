@@ -78,6 +78,26 @@ interfaceGraphique::ProjetJeuxEchecs::ProjetJeuxEchecs(QWidget* parent)
 	errorContainer->addWidget(messageErreur_);
 	rightLayout->addLayout(errorContainer);
 
+	//Pour le message de succes
+	messageSucces_ = new QLabel(this);
+	messageSucces_->setFixedSize(largeurErreur, hauteurErreur);
+	messageSucces_->setAlignment(Qt::AlignCenter);
+	messageSucces_->setWordWrap(true);
+	messageSucces_->setStyleSheet(
+		"QLabel { "
+		"color: white; "
+		"background-color: #5cb85c; "
+		"padding: 6px; "
+		"border-radius: 8px; "
+		"font-weight: bold; "
+		"font-size: 12px;"
+		"}"
+	);
+	messageSucces_->setVisible(false);
+	QHBoxLayout* successContainer = new QHBoxLayout();
+	successContainer->addWidget(messageSucces_);
+	rightLayout->addLayout(successContainer);
+
 
 	for (int i = 0; i < ModeleJeu::tailleEchiquier; ++i) {		//lignes
 		for (int j = 0; j < ModeleJeu::tailleEchiquier; ++j) {	//colonnes
@@ -172,6 +192,21 @@ void interfaceGraphique::ProjetJeuxEchecs::surDeplacementValide(bool success, co
 		messageErreur_->show();
 		QTimer::singleShot(2000, messageErreur_, &QLabel::hide);
 	}
+	else if (!message.isEmpty())
+	{
+		//messageErreur_->setStyleSheet("QLabel { "
+		//"color: white; "
+		//"background-color: #5cb85c; "
+		//"padding: 6px; "
+		//"border-radius: 8px; "
+		//"font-weight: bold; "
+		//"font-size: 12px;"
+		//	"}");
+		messageSucces_->setText(message);
+		messageSucces_->show();
+		QTimer::singleShot(2000, messageSucces_, &QLabel::hide);
+	}
+
 }
 
 void interfaceGraphique::ProjetJeuxEchecs::surPieceClic(const ModeleJeu::Coordonnee& coordonnee)
