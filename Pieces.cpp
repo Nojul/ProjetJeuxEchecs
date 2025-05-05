@@ -185,6 +185,10 @@ ModeleJeu::Piece* ModeleJeu::JeuPrincipal::getPiece(const Coordonnee& position) 
 	return echiquier_[position.x][position.y].piece.get();
 }
 
+int ModeleJeu::JeuPrincipal::getCompteurRoi() const {
+	return compteurRoi_;
+}
+
 ModeleJeu::Couleur ModeleJeu::JeuPrincipal::getCouleurPiece(const Coordonnee& position) const {
 	return echiquier_[position.x][position.y].couleur;
 }

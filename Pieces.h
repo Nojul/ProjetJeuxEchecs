@@ -134,7 +134,7 @@ namespace ModeleJeu {
 		Couleur getCouleurPiece(const Coordonnee& position) const;
 		void setCaseSelectionnee(const Coordonnee& position);
 		Coordonnee getCaseSelectionnee() const;
-		int getCompteurRoi() const { return compteurRoi_; }
+		int getCompteurRoi() const;
 		friend class Temporaire;
 		friend class Roi;
 		bool verifierEchec(Couleur couleurJoueur);
