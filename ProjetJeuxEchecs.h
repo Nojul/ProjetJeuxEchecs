@@ -28,11 +28,19 @@ namespace interfaceGraphique {
 		~ProjetJeuxEchecs();
 		ProjetJeuxEchecs(const ProjetJeuxEchecs&) = delete;
 		ProjetJeuxEchecs& operator=(const ProjetJeuxEchecs&) = delete;
-		void clic(ModeleJeu::Coordonnee& coordonnee);
-		void miseAJour();
+		void faireConnections();
 
-	private slots:
-		void onPlacementChanged();
+	public slots:
+		void miseAJour();
+		void surChangementPlacement();
+		void surPieceClic(const ModeleJeu::Coordonnee& coordonnee);
+		void surDeplacementValide(bool success, const QString& message);
+		void surPieceSelectionnee(const ModeleJeu::Coordonnee& coordonnee);
+		void surTourChange(ModeleJeu::Couleur nouveauJoueur);
+
+	signals:
+		void pieceSelectionnee(const ModeleJeu::Coordonnee& coordonnee);
+		void tourChange(ModeleJeu::Couleur nouveauJoueur);
 
 	private:
 		Ui::ProjetJeuxEchecsClass* ui;

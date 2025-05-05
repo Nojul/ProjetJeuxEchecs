@@ -130,6 +130,7 @@ namespace ModeleJeu {
 		friend class Temporaire;
 		friend class Roi;
 
+
 	private:
 		Coordonnee caseSelectione_;
 		static int compteurRoi_;
