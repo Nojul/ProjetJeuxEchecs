@@ -26,6 +26,14 @@ namespace ModeleJeu {
 		Noir
 	};
 
+	inline Couleur couleurAdverse(Couleur couleurActuelle) 
+	{
+		switch (couleurActuelle) {
+		case Couleur::Blanc: return Couleur::Noir;
+		case Couleur::Noir: return Couleur::Blanc;
+		}
+	}
+
 	inline std::string couleurToString(Couleur couleur) {
 		switch (couleur) {
 		case Couleur::Blanc: return "Blanc";
@@ -129,6 +137,7 @@ namespace ModeleJeu {
 		int getCompteurRoi() const { return compteurRoi_; }
 		friend class Temporaire;
 		friend class Roi;
+		bool verifierEchec(Couleur couleurJoueur);
 
 	private:
 		Coordonnee caseSelectione_;
@@ -141,7 +150,6 @@ namespace ModeleJeu {
 		Temporaire(const Coordonnee& position, const Coordonnee& positionFutur, CaseEchiquier(&echiquier)[tailleEchiquier][tailleEchiquier], JeuPrincipal* jeu);
 		~Temporaire();
 		Piece* getTemporaire();
-		bool verifierEchec(Couleur couleurJoueur);
 
 	private:
 		const Coordonnee position_;

@@ -41,6 +41,7 @@ namespace interfaceGraphique {
 	signals:
 		void pieceSelectionnee(const ModeleJeu::Coordonnee& coordonnee);
 		void tourChange(ModeleJeu::Couleur nouveauJoueur);
+		void miseEnEchec();
 
 	private:
 		Ui::ProjetJeuxEchecsClass* ui;
