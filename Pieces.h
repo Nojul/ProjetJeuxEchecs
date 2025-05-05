@@ -82,7 +82,7 @@ namespace ModeleJeu {
 	public:
 		Piece() = default;
 		virtual ~Piece() = default;
-		virtual bool estMouvementValide(const Coordonnee& depart, const Coordonnee& arrivee) = 0;
+		virtual bool estMouvementValide(const Coordonnee& depart, const Coordonnee& arrivee) const = 0;
 	};
 
 	struct CaseEchiquier {
@@ -103,19 +103,19 @@ namespace ModeleJeu {
 	public:
 		Roi() = default;
 		~Roi();
-		bool estMouvementValide(const Coordonnee& depart, const Coordonnee& arrivee) override;
+		bool estMouvementValide(const Coordonnee& depart, const Coordonnee& arrivee)const  override;
 	};
 
 	class Tour : public Piece {
 	public:
 		Tour() = default;
-		bool estMouvementValide(const Coordonnee& depart, const Coordonnee& arrivee) override;
+		bool estMouvementValide(const Coordonnee& depart, const Coordonnee& arrivee) const  override;
 	};
 
 	class Cavalier : public Piece {
 	public:
 		Cavalier() = default;
-		bool estMouvementValide(const Coordonnee& depart, const Coordonnee& arrivee) override;
+		bool estMouvementValide(const Coordonnee& depart, const Coordonnee& arrivee) const override;
 	};
 
 	class CompteurRoisException : public std::logic_error {
@@ -127,10 +127,10 @@ namespace ModeleJeu {
 	public:
 		JeuPrincipal(Placement placement);
 		void miseEnPlacement(Placement placement);
-		bool verifierContraintesEchiquier(const Coordonnee& ancienne, const Coordonnee& nouvelle);
+		bool verifierContraintesEchiquier(const Coordonnee& ancienne, const Coordonnee& nouvelle) const;
 		void ajouterPiece(const Coordonnee& position, Couleur couleur, TypePiece type);
 		std::tuple<bool, std::string> deplacerPiece(const Coordonnee& depart, Couleur couleurJoueur, const Coordonnee& arrivee);
-		Piece* getPiece(const Coordonnee& position);
+		Piece* getPiece(const Coordonnee& position) const;
 		Couleur getCouleurPiece(const Coordonnee& position) const;
 		void setCaseSelectionnee(const Coordonnee& position);
 		Coordonnee getCaseSelectionnee() const;

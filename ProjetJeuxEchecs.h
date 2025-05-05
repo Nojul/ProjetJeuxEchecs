@@ -35,7 +35,7 @@ namespace interfaceGraphique {
 		void surChangementPlacement();
 		void surPieceClic(const ModeleJeu::Coordonnee& coordonnee);
 		void surDeplacementValide(bool success, const QString& message);
-		void surPieceSelectionnee(const ModeleJeu::Coordonnee& coordonnee);
+		void surPieceSelectionnee(const ModeleJeu::Coordonnee& coordonnee) const;
 		void surTourChange(ModeleJeu::Couleur nouveauJoueur);
 
 	signals:

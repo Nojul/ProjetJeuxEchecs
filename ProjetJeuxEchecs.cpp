@@ -160,8 +160,7 @@ void interfaceGraphique::ProjetJeuxEchecs::faireConnections() {
 
 }
 
-void interfaceGraphique::ProjetJeuxEchecs::surPieceSelectionnee(const ModeleJeu::Coordonnee& coordonnee)
-{
+void interfaceGraphique::ProjetJeuxEchecs::surPieceSelectionnee(const ModeleJeu::Coordonnee& coordonnee) const {
 	for (int i = 0; i < ModeleJeu::tailleEchiquier; ++i) {
 		for (int j = 0; j < ModeleJeu::tailleEchiquier; ++j) {
 			QString styleBase;
