@@ -117,9 +117,11 @@ std::tuple<bool, std::string> ModeleJeu::JeuPrincipal::deplacerPiece(const Coord
 			}
 
 			{
-				Temporaire pieceTemporaire(depart, arrivee, echiquier_, this);
-				if (pieceTemporaire.verifierEchec(couleurJoueur)) {
-					return { false, "Ce deplacement place le joueur " + couleurToString(couleurJoueur) + " en echec." };
+				{
+					Temporaire pieceTemporaire(depart, arrivee, echiquier_, this);
+					if (verifierEchec(couleurJoueur)) {
+						return { false, "Ce deplacement place le joueur " + couleurToString(couleurJoueur) + " en echec." };
+					}
 				}
 			}
 
@@ -164,6 +166,7 @@ ModeleJeu::Temporaire::Temporaire(const Coordonnee& position, const Coordonnee& 
 	caseTemporaire_ = CaseEchiquier(std::move(echiquier_[position.x][position.y].piece), echiquier_[position.x][position.y].couleur);
 	caseCapturee_ = CaseEchiquier(std::move(echiquier_[positionFutur.x][positionFutur.y].piece), echiquier_[positionFutur.x][positionFutur.y].couleur);
 	echiquier_[positionFutur.x][positionFutur.y] = CaseEchiquier(std::move(caseTemporaire_.piece), caseTemporaire_.couleur);
+	echiquier_[position.x][position.y] = CaseEchiquier();
 }
 
 ModeleJeu::Temporaire::~Temporaire() {
@@ -177,7 +180,7 @@ ModeleJeu::Piece* ModeleJeu::Temporaire::getTemporaire()
 	return echiquier_[positionFutur_.x][positionFutur_.y].piece.get();
 }
 
-bool ModeleJeu::Temporaire::verifierEchec(Couleur couleurJoueur) {
+bool ModeleJeu::JeuPrincipal::verifierEchec(Couleur couleurJoueur) {
 	int positionRoiX = -1;
 	int positionRoiY = -1;
 	for (int i = 0; i < ModeleJeu::tailleEchiquier; i++) {
@@ -189,6 +192,7 @@ bool ModeleJeu::Temporaire::verifierEchec(Couleur couleurJoueur) {
 			}
 		}
 	}
+
 	if (positionRoiX == -1 and positionRoiY == -1) {
 		std::cout << "Le roi n'a pas ete trouve." << std::endl;
 		return false;
@@ -201,7 +205,7 @@ bool ModeleJeu::Temporaire::verifierEchec(Couleur couleurJoueur) {
 				Coordonnee depart(i, j);
 				Coordonnee destination(positionRoiX, positionRoiY);
 
-				if (caseActuelle.piece.get()->estMouvementValide(depart, destination) && jeu_->verifierContraintesEchiquier(depart, destination)) {
+				if (caseActuelle.piece.get()->estMouvementValide(depart, destination) && verifierContraintesEchiquier(depart, destination)) {
 					return true;
 				}
 			}

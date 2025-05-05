@@ -127,6 +127,7 @@ namespace ModeleJeu {
 		void setCaseSelectionnee(const Coordonnee& position);
 		Coordonnee getCaseSelectionnee() const;
 		int getCompteurRoi() const { return compteurRoi_; }
+		bool verifierEchec(Couleur couleurJoueur);
 		friend class Temporaire;
 		friend class Roi;
 
@@ -141,7 +142,6 @@ namespace ModeleJeu {
 		Temporaire(const Coordonnee& position, const Coordonnee& positionFutur, CaseEchiquier(&echiquier)[tailleEchiquier][tailleEchiquier], JeuPrincipal* jeu);
 		~Temporaire();
 		Piece* getTemporaire();
-		bool verifierEchec(Couleur couleurJoueur);
 
 	private:
 		const Coordonnee position_;
