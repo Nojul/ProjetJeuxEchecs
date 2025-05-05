@@ -31,8 +31,11 @@ namespace ModeleJeu {
 		switch (couleurActuelle) {
 		case Couleur::Blanc: return Couleur::Noir;
 		case Couleur::Noir: return Couleur::Blanc;
+		default:
+			throw std::invalid_argument("Couleur inconnue dans couleurAdverse");
 		}
 	}
+
 
 	inline std::string couleurToString(Couleur couleur) {
 		switch (couleur) {

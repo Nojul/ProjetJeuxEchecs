@@ -29,6 +29,7 @@ namespace interfaceGraphique {
 		ProjetJeuxEchecs(const ProjetJeuxEchecs&) = delete;
 		ProjetJeuxEchecs& operator=(const ProjetJeuxEchecs&) = delete;
 		void faireConnections();
+		void demarrerJeu();
 
 	public slots:
 		void miseAJour();
@@ -52,6 +53,7 @@ namespace interfaceGraphique {
 		QLabel* messageSucces_ = nullptr;
 		QComboBox* choixPlacement_ = nullptr;
 		QLabel* tourLabel_ = nullptr;
+		QPushButton* boutonCommencer_ = nullptr;
 	};
 
 }

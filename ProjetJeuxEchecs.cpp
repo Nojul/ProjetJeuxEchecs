@@ -358,4 +358,3 @@ void interfaceGraphique::ProjetJeuxEchecs::miseAJour() {
 		}
 	}
 }
-
