@@ -168,13 +168,12 @@ std::tuple<bool, std::string> ModeleJeu::JeuPrincipal::deplacerPiece(const Coord
 				std::cout << "Ce deplacement a place le joueur " + couleurToString(couleurAdverse(couleurJoueur)) + " en echec." << std::endl;
 				return { true, "Ce deplacement a place le joueur " + couleurToString(couleurAdverse(couleurJoueur)) + " en echec." };
 			}
-			else 
-			{ 
-				return { true, "" }; 
+			else
+			{
+				return { true, "" };
 			}
 		}
 		else {
-			std::cerr << "Deplacement invalide pour cette piece" << std::endl;
 			return { false, "Deplacement invalide pour cette piece" };
 		}
 	}
