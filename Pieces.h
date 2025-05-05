@@ -130,7 +130,6 @@ namespace ModeleJeu {
 		friend class Temporaire;
 		friend class Roi;
 
-
 	private:
 		Coordonnee caseSelectione_;
 		static int compteurRoi_;
@@ -139,17 +138,17 @@ namespace ModeleJeu {
 
 	class Temporaire {
 	public:
-		Temporaire(const Coordonnee& position, const Coordonnee& positionFutur, CaseEchiquier(&echiquier)[tailleEchiquier][tailleEchiquier]);
+		Temporaire(const Coordonnee& position, const Coordonnee& positionFutur, CaseEchiquier(&echiquier)[tailleEchiquier][tailleEchiquier], JeuPrincipal* jeu);
 		~Temporaire();
 		Piece* getTemporaire();
 		bool verifierEchec(Couleur couleurJoueur);
 
 	private:
-		Coordonnee position_;
-		Coordonnee positionFutur_;
+		const Coordonnee position_;
+		const Coordonnee positionFutur_;
 		CaseEchiquier(&echiquier_)[tailleEchiquier][tailleEchiquier];
 		CaseEchiquier caseTemporaire_;
 		CaseEchiquier caseCapturee_;
+		JeuPrincipal* jeu_;  // Add this member
 	};
-
 }
