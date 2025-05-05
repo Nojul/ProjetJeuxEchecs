@@ -26,7 +26,7 @@ namespace ModeleJeu {
 		Noir
 	};
 
-	inline Couleur couleurAdverse(Couleur couleurActuelle) 
+	inline Couleur couleurAdverse(Couleur couleurActuelle)
 	{
 		switch (couleurActuelle) {
 		case Couleur::Blanc: return Couleur::Noir;
@@ -135,7 +135,6 @@ namespace ModeleJeu {
 		void setCaseSelectionnee(const Coordonnee& position);
 		Coordonnee getCaseSelectionnee() const;
 		int getCompteurRoi() const { return compteurRoi_; }
-		bool verifierEchec(Couleur couleurJoueur);
 		friend class Temporaire;
 		friend class Roi;
 		bool verifierEchec(Couleur couleurJoueur);
@@ -158,6 +157,6 @@ namespace ModeleJeu {
 		CaseEchiquier(&echiquier_)[tailleEchiquier][tailleEchiquier];
 		CaseEchiquier caseTemporaire_;
 		CaseEchiquier caseCapturee_;
-		JeuPrincipal* jeu_;  // Add this member
+		JeuPrincipal* jeu_;
 	};
 }
