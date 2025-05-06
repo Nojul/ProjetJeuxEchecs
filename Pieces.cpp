@@ -178,11 +178,9 @@ bool ModeleJeu::JeuPrincipal::roiNePeutPlusBouger(Couleur couleurJoueur)
 std::tuple<bool, std::string> ModeleJeu::JeuPrincipal::deplacerPiece(const Coordonnee& depart, Couleur couleurJoueur, const Coordonnee& arrivee) {
 	const auto& caseDepart = echiquier_[depart.x][depart.y];
 	if (!caseDepart.piece) {
-		std::cout << "Aucune piece selectionnee" << std::endl;
 		return { false, "Aucune piece selectionnee" };
 	}
 	if (caseDepart.couleur != couleurJoueur) {
-		std::cout << "La piece a deplacer ne correspond pas avec la couleur du joueur." << std::endl;
 		return { false, "La piece a deplacer ne correspond pas avec la couleur du joueur." };
 	}
 
@@ -210,11 +208,9 @@ std::tuple<bool, std::string> ModeleJeu::JeuPrincipal::deplacerPiece(const Coord
 
 			if (roiNePeutPlusBouger(couleurAdverse(couleurJoueur))) 
 			{
-				std::cout << "Le roi " + couleurToString(couleurAdverse(couleurJoueur)) + " ne peut plus bouger, la partie se termine. Veuillez reinitialiser." << std::endl;
 				return { true, "Le roi " + couleurToString(couleurAdverse(couleurJoueur)) + " ne peut plus bouger, la partie se termine. Veuillez reinitialiser." };
 			}
 			else if (verifierEchec(couleurAdverse(couleurJoueur))) {
-				std::cout << "Ce deplacement a place le joueur " + couleurToString(couleurAdverse(couleurJoueur)) + " en echec." << std::endl;
 				return { true, "Ce deplacement a place le joueur " + couleurToString(couleurAdverse(couleurJoueur)) + " en echec." };
 			}
 			else
