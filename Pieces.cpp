@@ -208,14 +208,14 @@ std::tuple<bool, std::string> ModeleJeu::JeuPrincipal::deplacerPiece(const Coord
 			std::cout << "Deplacement effectue de (" << depart.x << "," << depart.y
 				<< ") a (" << arrivee.x << "," << arrivee.y << ")" << std::endl;
 
-			if (verifierEchec(couleurAdverse(couleurJoueur))) {
+			if (roiNePeutPlusBouger(couleurAdverse(couleurJoueur))) 
+			{
+				std::cout << "Le roi " + couleurToString(couleurAdverse(couleurJoueur)) + " ne peut plus bouger, la partie se termine. Veuillez reinitialiser." << std::endl;
+				return { true, "Le roi " + couleurToString(couleurAdverse(couleurJoueur)) + " ne peut plus bouger, la partie se termine. Veuillez reinitialiser." };
+			}
+			else if (verifierEchec(couleurAdverse(couleurJoueur))) {
 				std::cout << "Ce deplacement a place le joueur " + couleurToString(couleurAdverse(couleurJoueur)) + " en echec." << std::endl;
 				return { true, "Ce deplacement a place le joueur " + couleurToString(couleurAdverse(couleurJoueur)) + " en echec." };
-			}
-			else if (roiNePeutPlusBouger(couleurAdverse(couleurJoueur))) 
-			{
-				std::cout << "Le roi " + couleurToString(couleurAdverse(couleurJoueur)) + " ne peut plus bouger, la partie se termine." << std::endl;
-				return { true, "Le roi " + couleurToString(couleurAdverse(couleurJoueur)) + " ne peut plus bouger, la partie se termine." };
 			}
 			else
 			{

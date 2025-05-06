@@ -29,7 +29,9 @@ namespace interfaceGraphique {
 		ProjetJeuxEchecs(const ProjetJeuxEchecs&) = delete;
 		ProjetJeuxEchecs& operator=(const ProjetJeuxEchecs&) = delete;
 		void faireConnections();
-		void demarrerJeu();
+		//void demarrerJeu();
+		void finPartie(const QString& message);
+		void reinitialiserPartie();
 
 	public slots:
 		void miseAJour();

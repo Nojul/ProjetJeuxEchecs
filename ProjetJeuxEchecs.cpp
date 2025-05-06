@@ -46,6 +46,11 @@ interfaceGraphique::ProjetJeuxEchecs::ProjetJeuxEchecs(QWidget* parent)
 	rightLayout->addWidget(choixPlacement_);
 	rightLayout->addSpacing(10);
 
+	//Pour reinitialiser la partie
+	QPushButton* reinitialiser = new QPushButton("Réinitialiser la partie");
+	rightLayout->addWidget(reinitialiser);
+	connect(reinitialiser, &QPushButton::clicked, this, &ProjetJeuxEchecs::reinitialiserPartie);
+
 	//Pour savoir le tour de joueur
 	tourLabel_ = new QLabel(this);
 	tourLabel_->setFixedSize(largeurErreur, hauteurErreur);
@@ -184,9 +189,37 @@ void interfaceGraphique::ProjetJeuxEchecs::surPieceSelectionnee(const ModeleJeu:
 	}
 }
 
+void interfaceGraphique::ProjetJeuxEchecs::reinitialiserPartie()
+{
+	int placementChoisi = choixPlacement_->currentData().toInt();
+	jeu_->miseEnPlacement(static_cast<ModeleJeu::Placement>(placementChoisi));
+
+	ModeleJeu::Coordonnee aucunePieceSelectionnee(-1, -1);
+	jeu_->setCaseSelectionnee(aucunePieceSelectionnee);
+	emit pieceSelectionnee(aucunePieceSelectionnee);
+
+	joueur = ModeleJeu::Couleur::Blanc;
+	emit tourChange(ModeleJeu::Couleur::Blanc);
+
+	miseAJour();
+
+	for (int i = 0; i < ModeleJeu::tailleEchiquier; ++i) {
+		for (int j = 0; j < ModeleJeu::tailleEchiquier; ++j) {
+			boutons[i][j]->setEnabled(true);
+		}
+	}
+}
+
 void interfaceGraphique::ProjetJeuxEchecs::finPartie(const QString& message)
 {
+	messageSucces_->setText(message);
+	messageSucces_->show();
 
+	for (int i = 0; i < ModeleJeu::tailleEchiquier; ++i) {
+		for (int j = 0; j < ModeleJeu::tailleEchiquier; ++j) {
+			boutons[i][j]->setEnabled(false);
+		}
+	}
 }
 
 void interfaceGraphique::ProjetJeuxEchecs::surDeplacementValide(bool success, const QString& message)
@@ -205,7 +238,6 @@ void interfaceGraphique::ProjetJeuxEchecs::surDeplacementValide(bool success, co
 		messageSucces_->show();
 		QTimer::singleShot(2000, messageSucces_, &QLabel::hide);
 	}
-
 }
 
 void interfaceGraphique::ProjetJeuxEchecs::surPieceClic(const ModeleJeu::Coordonnee& coordonnee)
