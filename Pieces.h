@@ -137,7 +137,9 @@ namespace ModeleJeu {
 		int getCompteurRoi() const { return compteurRoi_; }
 		friend class Temporaire;
 		friend class Roi;
+		std::pair<int, int> trouverPositionRoi(Couleur couleurJoueur);
 		bool verifierEchec(Couleur couleurJoueur);
+		bool roiNePeutPlusBouger(Couleur couleurJoueur);
 
 	private:
 		Coordonnee caseSelectione_;

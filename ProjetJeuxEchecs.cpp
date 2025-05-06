@@ -185,6 +185,11 @@ void interfaceGraphique::ProjetJeuxEchecs::surPieceSelectionnee(const ModeleJeu:
 	}
 }
 
+void interfaceGraphique::ProjetJeuxEchecs::finPartie(const QString& message)
+{
+
+}
+
 void interfaceGraphique::ProjetJeuxEchecs::surDeplacementValide(bool success, const QString& message)
 {
 	if (!success) {
@@ -192,16 +197,11 @@ void interfaceGraphique::ProjetJeuxEchecs::surDeplacementValide(bool success, co
 		messageErreur_->show();
 		QTimer::singleShot(2000, messageErreur_, &QLabel::hide);
 	}
-	else if (!message.isEmpty())
+	else if (success && !message.isEmpty())
 	{
-		//messageErreur_->setStyleSheet("QLabel { "
-		//"color: white; "
-		//"background-color: #5cb85c; "
-		//"padding: 6px; "
-		//"border-radius: 8px; "
-		//"font-weight: bold; "
-		//"font-size: 12px;"
-		//	"}");
+		if (message.contains("la partie se termine", Qt::CaseInsensitive)) {
+			finPartie(message);
+		}
 		messageSucces_->setText(message);
 		messageSucces_->show();
 		QTimer::singleShot(2000, messageSucces_, &QLabel::hide);
