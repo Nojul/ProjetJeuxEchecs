@@ -29,14 +29,14 @@ namespace interfaceGraphique {
 		ProjetJeuxEchecs(const ProjetJeuxEchecs&) = delete;
 		ProjetJeuxEchecs& operator=(const ProjetJeuxEchecs&) = delete;
 		void faireConnections();
-		void finPartie(const QString& message);
+		void demarrerJeu();
 
 	public slots:
 		void miseAJour();
 		void surChangementPlacement();
 		void surPieceClic(const ModeleJeu::Coordonnee& coordonnee);
 		void surDeplacementValide(bool success, const QString& message);
-		void surPieceSelectionnee(const ModeleJeu::Coordonnee& coordonnee);
+		void surPieceSelectionnee(const ModeleJeu::Coordonnee& coordonnee) const;
 		void surTourChange(ModeleJeu::Couleur nouveauJoueur);
 
 	signals:
@@ -53,6 +53,7 @@ namespace interfaceGraphique {
 		QLabel* messageSucces_ = nullptr;
 		QComboBox* choixPlacement_ = nullptr;
 		QLabel* tourLabel_ = nullptr;
+		QPushButton* boutonCommencer_ = nullptr;
 	};
 
 }

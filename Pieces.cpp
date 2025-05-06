@@ -14,18 +14,18 @@ int ModeleJeu::JeuPrincipal::compteurRoi_ = 0;
 
 ModeleJeu::Roi::~Roi() { JeuPrincipal::compteurRoi_--; }
 
-bool ModeleJeu::Roi::estMouvementValide(const Coordonnee& depart, const Coordonnee& arrivee) {
+bool ModeleJeu::Roi::estMouvementValide(const Coordonnee& depart, const Coordonnee& arrivee) const {
 	int deltaX = abs(depart.x - arrivee.x);
 	int deltaY = abs(depart.y - arrivee.y);
 	return deltaX <= 1 && deltaY <= 1 && (deltaX != 0 || deltaY != 0);
 }
 
-bool ModeleJeu::Tour::estMouvementValide(const Coordonnee& depart, const Coordonnee& arrivee) {
+bool ModeleJeu::Tour::estMouvementValide(const Coordonnee& depart, const Coordonnee& arrivee) const {
 	return (depart.x == arrivee.x || depart.y == arrivee.y) &&
 		(depart.x != arrivee.x || depart.y != arrivee.y);
 }
 
-bool ModeleJeu::Cavalier::estMouvementValide(const Coordonnee& depart, const Coordonnee& arrivee) {
+bool ModeleJeu::Cavalier::estMouvementValide(const Coordonnee& depart, const Coordonnee& arrivee) const {
 	int deltaX = abs(depart.x - arrivee.x);
 	int deltaY = abs(depart.y - arrivee.y);
 	return (deltaX == 2 && deltaY == 1) || (deltaX == 1 && deltaY == 2);
@@ -66,7 +66,7 @@ void ModeleJeu::JeuPrincipal::ajouterPiece(const Coordonnee& position, Couleur c
 		<< " sur (" << position.x << ", " << position.y << ")" << std::endl;
 }
 
-bool ModeleJeu::JeuPrincipal::verifierContraintesEchiquier(const Coordonnee& ancienne, const Coordonnee& nouvelle) {
+bool ModeleJeu::JeuPrincipal::verifierContraintesEchiquier(const Coordonnee& ancienne, const Coordonnee& nouvelle) const {
 	const auto& caseDepart = echiquier_[ancienne.x][ancienne.y];
 	if (!caseDepart.piece) return false;
 
@@ -231,8 +231,12 @@ std::tuple<bool, std::string> ModeleJeu::JeuPrincipal::deplacerPiece(const Coord
 	}
 }
 
-ModeleJeu::Piece* ModeleJeu::JeuPrincipal::getPiece(const Coordonnee& position) {
+ModeleJeu::Piece* ModeleJeu::JeuPrincipal::getPiece(const Coordonnee& position) const {
 	return echiquier_[position.x][position.y].piece.get();
+}
+
+int ModeleJeu::JeuPrincipal::getCompteurRoi() const {
+	return compteurRoi_;
 }
 
 ModeleJeu::Couleur ModeleJeu::JeuPrincipal::getCouleurPiece(const Coordonnee& position) const {

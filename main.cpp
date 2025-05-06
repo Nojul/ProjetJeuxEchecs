@@ -57,19 +57,3 @@ int main(int argc, char* argv[])
 	w.show();
 	return app.exec();
 }
-
-//QtWidgets.QComboBox.currentIndex()
-//Return type :
-//int
-//un combobox au debut pour choisir quel position faire, le combobox donne un int dependant du choix
-//https://en.wikipedia.org/wiki/Pawnless_chess_endgame
-/*    0 1 2 3 4 5 6 7
-	0 . . . . . . . .
-	1 . . . . . . . .
-	2 . . . . . . . .
-	3 . . . . . . . .
-	4 . . . . . . . .
-	5 . . . . . . . .
-	6 . . . . . . . .
-	7 . . . . . . . .
-	  0 1 2 3 4 5 6 7*/
