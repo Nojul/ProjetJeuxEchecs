@@ -2,7 +2,7 @@
 * Definition de la classe ProjetJeuxEchecs qui est le modele de l'interface graphique
 * \file   ProjetJeuxEchecs.h
 * \author Latendresse et Julien
-* \date   4 mai 2025
+* \date   6 mai 2025
 * Cree le 6 avril 2025
 */
 #include "Pieces.h"
@@ -12,7 +12,6 @@
 #include <QLabel>
 #include <qpushbutton.h>
 #include <QtWidgets/QMainWindow>
-
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class ProjetJeuxEchecsClass; };

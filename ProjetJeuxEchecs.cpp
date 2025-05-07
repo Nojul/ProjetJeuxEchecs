@@ -5,6 +5,7 @@
 * \date   4 mai 2025
 * Cree le 6 avril 2025
 */
+
 #include "ProjetJeuxEchecs.h"
 #include <iostream>
 #include <QComboBox>
@@ -14,11 +15,7 @@
 #include <QTimer>
 #include <QVBoxLayout>
 
-interfaceGraphique::ProjetJeuxEchecs::ProjetJeuxEchecs(QWidget* parent)
-	: QMainWindow(parent)
-	, ui(new Ui::ProjetJeuxEchecsClass())
-	, jeu_(nullptr)
-{
+interfaceGraphique::ProjetJeuxEchecs::ProjetJeuxEchecs(QWidget* parent) : QMainWindow(parent), ui(new Ui::ProjetJeuxEchecsClass()), jeu_(nullptr) {
 	ui->setupUi(this);
 	const int tailleFenetre = 800;
 	const int taillePanneau = 200;

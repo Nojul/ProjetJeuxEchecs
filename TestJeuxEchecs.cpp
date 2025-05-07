@@ -2,7 +2,7 @@
  * Programme permettant de tester le programme avec des tests unitaires sans interface graphique
  * \file   TestJeuxEchecs.cpp
  * \author Latendresse et Julien
- * \date   4 mai 2025
+ * \date   6 mai 2025
  * Cree le 6 avril 2025
  */
 
@@ -13,35 +13,19 @@
 #endif
 #ifdef TEST
 
-//TEST(Test, exempleDeTest)
-//{
-//	/*    0 1 2 3 4 5 6 7
-//	 *  0 . . . . . . . .
-//	 *  1 . . . . . . . .
-//	 *  2 . . . . . . . .
-//	 *  3 . . . . . . . .
-//	 *  4 . . . . . . . .
-//	 *  5 . . . . . . . .
-//	 *  6 . . . . . . . .
-//	 *  7 . . . . . . . .
-//	 *    0 1 2 3 4 5 6 7
-//	 */
-//
-//	std::cout << "\nPartie de test avec le controleur seulement:" << std::endl;
-//	auto jeu = ModeleJeu::JeuPrincipal(ModeleJeu::Placement::LaBourdonaisMcDonnell1834);
-//	jeu.deplacerPiece(ModeleJeu::Coordonnee(0, 1), ModeleJeu::Couleur::Blanc, ModeleJeu::Coordonnee(0, 0));
-//	jeu.deplacerPiece(ModeleJeu::Coordonnee(3, 0), ModeleJeu::Couleur::Noir, ModeleJeu::Coordonnee(2, 0));
-//	jeu.deplacerPiece(ModeleJeu::Coordonnee(0, 0), ModeleJeu::Couleur::Blanc, ModeleJeu::Coordonnee(0, 2));
-//	jeu.deplacerPiece(ModeleJeu::Coordonnee(1, 0), ModeleJeu::Couleur::Noir, ModeleJeu::Coordonnee(0, 2));
-//	std::cout << "\nFin de la partie de test avec controleur seulement\n" << std::endl;
-//
-//	EXPECT_EQ(1, 1);
-//}
-//
-//TEST(Test, exempleDeTest2)
-//{
-//	EXPECT_FALSE(1 == 2);
-//}
+ //TEST(Test, exempleDeTest)
+ //{
+ //	/*    0 1 2 3 4 5 6 7
+ //	 *  0 . . . . . . . .
+ //	 *  1 . . . . . . . .
+ //	 *  2 . . . . . . . .
+ //	 *  3 . . . . . . . .
+ //	 *  4 . . . . . . . .
+ //	 *  5 . . . . . . . .
+ //	 *  6 . . . . . . . .
+ //	 *  7 . . . . . . . .
+ //	 *    0 1 2 3 4 5 6 7
+ //	 */
 
 TEST(Test, RoiMouvementValide) {
 	ModeleJeu::JeuPrincipal jeu(ModeleJeu::Placement::LaBourdonaisMcDonnell1834);
@@ -94,7 +78,7 @@ TEST(Test, VerifierContraintesEchiquier) {
 
 	EXPECT_TRUE(jeu.verifierContraintesEchiquier(positionDebut1, positionFin1));
 	EXPECT_FALSE(jeu.verifierContraintesEchiquier(positionDebut2, positionFin1));
-	
+
 	//Tour
 	jeu.deplacerPiece({ 0,1 }, ModeleJeu::Couleur::Blanc, { 0,2 });
 	ModeleJeu::Coordonnee positionDebut3(0, 2);
