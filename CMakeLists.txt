@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.10)
 # set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_MESSAGE_LOG_LEVEL VERBOSE)
-include(cmake_cours.cmake)  # Certaines fonctions de configuration de compilation pour ce cours.
+include(cmake/cmake_cours.cmake)  # Certaines fonctions de configuration de compilation pour ce cours.
 
 # Le nom du projet.
-project(ProjetTest CXX)
+project(ProjetJeuxEchecs CXX)
 
 afficher_infos_generateur()  # Doit être après "project( )".
 
@@ -17,20 +17,36 @@ set(BILIOTHEQUE_COURS
 	"include/debogage_memoire.hpp"
 )
 
-# On met les fichiers sources (incluant les entêtes)
-file(GLOB ALL_FILES
-	*.cpp
-	*.hpp
-	${BILIOTHEQUE_COURS}
-)
+# On met les fichiers sources (incluant les entêtes) - explicit src/ and include/
+file(GLOB_RECURSE ALL_SRC CONFIGURE_DEPENDS src/*.cpp src/*.c)
+file(GLOB_RECURSE ALL_HDR CONFIGURE_DEPENDS include/*.hpp include/*.h)
+set(ALL_FILES ${ALL_SRC} ${ALL_HDR} ${BILIOTHEQUE_COURS})
 
 configurer_options_compilation_globales()  # Doit être avant le "add_executable".
 configurer_Qt_auto_tout()                  # Doit être avant le "add_executable".
+# Make sure AUTOUIC can find .ui files moved to project root/src/resources
+set(CMAKE_AUTOUIC_SEARCH_PATHS
+	"${CMAKE_SOURCE_DIR}"
+	"${CMAKE_SOURCE_DIR}/src"
+	"${CMAKE_SOURCE_DIR}/resources"
+)
 add_executable(${PROJECT_NAME} ${ALL_FILES})
 
-find_package(Qt6 COMPONENTS Core Widgets REQUIRED)  # Mettre ici ce qui est requis de Qt (et mettre Qt5 ou Qt6 selon la version que vous avez).
+# On essaie d'aider CMake à trouver Qt sur macOS (Homebrew default locations).
+if(APPLE)
+	if(NOT DEFINED Qt6_DIR)
+		# Common Homebrew prefixes on Apple Silicon and Intel
+		if(EXISTS "/opt/homebrew/opt/qt/lib/cmake/Qt6")
+			list(APPEND CMAKE_PREFIX_PATH "/opt/homebrew/opt/qt/lib/cmake")
+		elseif(EXISTS "/usr/local/opt/qt/lib/cmake/Qt6")
+			list(APPEND CMAKE_PREFIX_PATH "/usr/local/opt/qt/lib/cmake")
+		endif()
+	endif()
+endif()
+
+find_package(Qt6 COMPONENTS Core Widgets REQUIRED)  # Mettre ici ce qui est requis de Qt (Qt5 ou Qt6 selon ce que vous avez)
 afficher_version_Qt()  # Doit être après le "find_package(Qt...".
-target_link_libraries(${PROJECT_NAME} Qt6::Core Qt6::Widgets)  # Doit être après le "add_executable" et lui passer le même nom.  Mettre encore ici ce qui est requis de Qt.
+target_link_libraries(${PROJECT_NAME} Qt6::Core Qt6::Widgets)  # Doit être après le "add_executable" et lui passer le même nom.
 configurer_GoogleTest(${PROJECT_NAME})  # Doit être après le "add_executable" et lui passer le même nom.
 
 ajouter_target_couverture(${PROJECT_NAME})  # Doit être après le "add_executable" et lui passer le même nom. Ajoute un cible ${PROJECT_NAME}_couverture pour obtenir la couverture de code avec gcov (si on trouve gcov).
