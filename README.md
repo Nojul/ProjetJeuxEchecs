@@ -1,101 +1,89 @@
-# ProjetJeuxEchecs — macOS / VS Code setup
-
-This repository was migrated from Visual Studio (Windows) to macOS + VS Code. The project now uses a tidy layout and CMake.
-
-Quick start (Homebrew Qt):
-
-```bash
-# Install Qt via Homebrew (if needed)
-brew install qt
-
-# Configure and build (out-of-source)
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
-cmake --build build -j
-./build/ProjetJeuxEchecs
-```
-
-Notes
-
-Project layout
-
-If you want, I can also add a `.vscode` folder with CMake Tools and launch configurations.
-
 # ProjetJeuxEchecs
 
-ProjetJeuxEchecs is a small chess game project with a Qt GUI and separable game logic. This repository was migrated from Visual Studio (Windows) to macOS + VS Code and uses CMake for builds.
+Jeu d'échecs interactif avec interface graphique Qt, développé en C++ dans le cadre d'un cours de programmation orientée objet. L'application permet de rejouer des parties historiques célèbres et de les explorer de manière interactive.
 
-**What it contains**
+*Latendresse & Julien — avril / mai 2025*
 
-- GUI application: the Qt-based executable `ProjetJeuxEchecs` (entry: `src/main.cpp`).
-- Game logic and helpers in the sources under `src/` and headers under `include/`.
-- Resources/UI: `resources/ProjetJeuxEchecs.ui` and `resources/ProjetJeuxEchecs.qrc`.
-- Vendor/testing helpers: `bibliotheque_cours/` and `googletest/` remain in-tree for convenience.
-- Visual Studio artifacts were moved to `visual_studio/` for historical reference.
+---
 
-Features
+## Aperçu
+<p align="center">
+  <img width="550" alt="Interface principale" src="https://github.com/user-attachments/assets/04bf2494-da00-47ec-875c-3fa3ca8e60b5" />
+</p>
 
-- Qt6-based GUI (Core + Widgets).
-- Modular code layout so game logic can be reused/tested without Qt.
-- CMake AUTOUIC/AUTORCC/AUTOMOC enabled — `.ui` and `.qrc` processed automatically.
+---
 
-Prerequisites (macOS)
+## Fonctionnalités
 
-- Xcode command line tools (compiler)
-- CMake >= 3.10
-- Qt 6 (install with Homebrew or the official Qt installer)
+### Positions historiques célèbres
 
-Install Qt (recommended via Homebrew)
+Quatre parties emblématiques de l'histoire des échecs sont disponibles, reconstituées fidèlement :
+
+| Partie | Année |
+|---|---|
+| La Bourdonnais vs. McDonnell | 1834 |
+| Karpov vs. Ftacnik | 1988 |
+| J. Polgar vs. Kasparov | 1996 |
+| Alekhine vs. Capablanca | 1927 |
+
+### Interface graphique échiquier
+
+- Échiquier interactif : sélection et déplacement des pièces au clic
+- Mise en évidence de la pièce sélectionnée (bordure verte)
+- Indicateur de tour (Blanc / Noir) mis à jour en temps réel
+- Réinitialisation de la partie à tout moment
+
+### Détection de fin de partie
+
+L'application détecte automatiquement la fin de partie et affiche un message de résultat. Les cases sont désactivées dès que la partie est terminée.
+
+---
+
+## Technologies
+
+- **C++17**
+- **Qt 6** — Core + Widgets (AUTOUIC / AUTORCC / AUTOMOC)
+- **CMake** ≥ 3.10
+- **GoogleTest** — inclus dans le dépôt
+
+---
+
+## Installation et compilation
+
+### Prérequis (macOS)
 
 ```bash
-brew update
 brew install qt
 ```
 
-Configure, build and run (out-of-source)
+### Compiler et lancer
 
 ```bash
-# From repository root
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
 cmake --build build -j
 ./build/ProjetJeuxEchecs
 ```
 
-Notes on Qt installation
+> Si Qt est installé via l'installeur officiel :
+> `cmake -S . -B build -DCMAKE_PREFIX_PATH=/path/to/Qt/<version>/lib/cmake`
 
-- If you installed Qt with the official online installer, pass the CMake prefix path:
+---
 
-```bash
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_PREFIX_PATH=/path/to/Qt/<version>/lib/cmake
+## Structure du projet
+
+```
+ProjetJeuxEchecs/
+├── src/                  # Fichiers source (.cpp)
+├── include/              # En-têtes (.h)
+├── resources/            # Fichiers .ui et .qrc
+├── bibliotheque_cours/   # Utilitaires du cours
+├── googletest/           # Framework de tests
+└── visual_studio/        # Fichiers VS originaux (référence)
 ```
 
-or set `-DQt6_DIR=/path/to/Qt/<version>/lib/cmake/Qt6`.
+---
 
-Running tests
+## Auteurs
 
-- This project includes GoogleTest sources; if you add a separate test target in CMake you can build/run it with:
-
-```bash
-cmake --build build --target tests
-./build/tests
-```
-
-Currently the main executable may run any built-in test runner depending on build-time options (see `bibliotheque_cours`).
-
-Project layout (recommended)
-
-- `src/` — implementation (.cpp)
-- `include/` — public headers
-- `resources/` — `.ui`, `.qrc`, icons
-- `cmake/` — CMake helper modules (now contains `cmake_cours.cmake`)
-- `visual_studio/` — original VS solution/project files (kept for history)
-- `googletest/`, `bibliotheque_cours/` — third-party/vendor code
-
-Cleaning build
-
-```bash
-rm -rf build
-```
-
-Want help
-
-- I can: add a `lib/` vs `app/` split and update `CMakeLists.txt`, add a `.vscode/` CMake Tools + launch configuration, or create a test target. Which should I do next?
+- **Marina Latendresse**
+- **Noé Julien**
